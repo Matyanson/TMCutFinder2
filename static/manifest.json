@@ -1,0 +1,16 @@
+{
+  "name": "SvelteKit Template",
+  "short_name": "SK template",
+  "description": "SvelteKit template focusing on fast loadtime. pwa, electron support",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#5353ff",
+  "background_color":"#ffffff",
+  "icons": [
+    {
+      "src": "logo_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }]
+}
