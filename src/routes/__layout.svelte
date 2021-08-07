@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-    <title>Default Template</title>
+    <title>TMCutFinder</title>
 </svelte:head>
 
 <Navbar/>

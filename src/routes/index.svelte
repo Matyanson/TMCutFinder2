@@ -6,5 +6,17 @@
     <meta name="description" content="The Homepage of the template app">
 </svelte:head>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1>CutFinder</h1>
+
+<div class="box">
+
+</div>
+
+<style>
+    .box{
+        height: 300px;
+        width: 500px;
+
+        border: 2px solid crimson;
+    }
+</style>
