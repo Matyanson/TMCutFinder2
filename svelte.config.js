@@ -5,6 +5,7 @@
 import preprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
 import adapter from '@sveltejs/adapter-static';
+import { resolve } from 'path';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -23,7 +24,15 @@ const config = {
 		prerender: {
 			crawl: true,
 			enabled: true,
+		},
+		vite: {
+			resolve: {
+				alias: {
+					src: resolve('./src')
+				}
+			}
 		}
+		
 	}
 };
 
