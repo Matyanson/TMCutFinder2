@@ -12,21 +12,17 @@
     </div>
 </div>
 <script lang="ts">
-import { onDestroy, onMount } from "svelte";
+import { sizeTracker } from "src/utils/dom";
+import { onMount } from "svelte";
 
     let svg: SVGElement;
     let aspect_ratio = 16/9;
     let unit = 1080 / 100 //1% of VH
-
-    let observer: ResizeObserver = null;
-
+    
+    const observer = sizeTracker();
 
     onMount(() => {
         setup();
-    })
-    onDestroy(() => {
-        if(observer)
-            observer.disconnect();
     })
 
     const setup = () => {
@@ -36,8 +32,7 @@ import { onDestroy, onMount } from "svelte";
             aspect_ratio =  width / height;
             unit = height / 100;
 
-            observer = new ResizeObserver(handleResize);
-            observer.observe(svg);
+            observer.init(svg, handleResize);
         }
     }
     const handleResize = () => {
