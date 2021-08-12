@@ -10,9 +10,10 @@ export const sizeTracker = (): SizeTracker => {
     let observer: ResizeObserver = null;
 
     const init = (el: Element | Element[], callback: () => void = null) => {
-        if(typeof(ResizeObserver) === 'undefined')
+        if(typeof(ResizeObserver) == 'undefined' && typeof(Window) != 'undefined') {
             window.addEventListener('resize', callback);
-
+            return;
+        }
         observer = new ResizeObserver(callback);
         add(el);
     }
