@@ -1,5 +1,5 @@
 <div class="box"><!--to keep size relative to this, not the outside wrap-->
-    <div class="wrap">
+    <div class="wrap" style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}>
         <svg bind:this={svg}>
             <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
@@ -11,6 +11,7 @@
             <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
     </div>
 </div>
+<svelte:window on:keydown={onKeyDown} />
 <script lang="ts">
 import { sizeTracker } from "src/utils/dom";
 import { onMount } from "svelte";
@@ -18,12 +19,45 @@ import { onMount } from "svelte";
     let svg: SVGElement;
     let aspect_ratio = 16/9;
     let unit = 1080 / 100 //1% of VH
+    let scale = 1;
+    let position = {x: 0, y: 0};
     
     const observer = sizeTracker();
 
     onMount(() => {
         setup();
     })
+
+    const onKeyDown = (e: KeyboardEvent) => {
+        console.log(e.key);
+        switch(e.key){
+            case '+':
+                scale *= 1.1;
+                break;
+            case '-':
+                scale /= 1.1;
+                break;
+            case 'ArrowRight':
+                position.x -= 5 / scale;
+                break;
+            case 'ArrowLeft':
+                position.x += 5 / scale;
+                break;
+            case 'ArrowUp':
+                position.y += 5 / scale;
+                break;
+            case 'ArrowDown':
+                position.y -= 5 / scale;
+                break;
+            case 'r':
+                position = {x: 0, y: 0};
+                scale = 1;
+                break;
+            case 'c':
+                position = {x: 0, y: 100 * (1-scale) / (2*scale)};
+                break;
+        }
+    }
 
     const setup = () => {
         if(svg){
@@ -48,9 +82,11 @@ import { onMount } from "svelte";
     }
     .wrap{
         position: relative;
-        height: 100%;
-        width: 100%;
+        height: var(--zoom);
+        width: var(--zoom);
+        transform: translate(var(--offsetX), var(--offsetY));
         background-color: aqua;
+        
     }
     svg{
         position: absolute;
@@ -60,7 +96,7 @@ import { onMount } from "svelte";
         height: 100%;
         overflow: visible;
     }
-    img {
+    img{
         display: block;
         height: 100%;
         width: 100%;
