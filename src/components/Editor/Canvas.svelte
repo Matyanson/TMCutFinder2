@@ -76,8 +76,10 @@ import { onMount } from "svelte";
 <style>
     .box{
         display: flex;
+        height: 100%;
+        width: 100%;
         flex-flow: column;
-        justify-items: center;
+        justify-content: center;
         align-items: center;
     }
     .wrap{
