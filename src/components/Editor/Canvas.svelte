@@ -1,5 +1,6 @@
 <div 
-class="box" class:cam={$toolIndex == 3} style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}
+class="box" class:cam={$toolIndex == 3} class:sel={$toolIndex == 0}
+style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}
 on:mousemove={handleMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:wheel={handleWheel}
 >
     <div class="wrap">
@@ -149,6 +150,9 @@ import { onMount } from "svelte";
     }
     .box.cam{
         cursor:grabbing;
+    }
+    .box.sel{
+        cursor: default;
     }
     .wrap{
         position: absolute;
