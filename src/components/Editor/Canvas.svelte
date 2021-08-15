@@ -1,10 +1,10 @@
 <div class="box"><!--to keep size relative to this, not the outside wrap-->
     <div class="wrap" style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}>
-        <svg bind:this={svg} on:contextmenu|preventDefault={()=>{}} on:wheel|nonpassive|preventDefault={()=>{}}>
+            <svg bind:this={svg} on:contextmenu|preventDefault={()=>{}} on:wheel|nonpassive={(e)=>{ if(space) e.preventDefault();}}>
             <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
             </marker> 
-            <text x={'0%'} y={'0%'}>{m.x +':'+ m.y}</text> 
+                <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)} : ${Math.floor(m.y)}`}</text> 
             <circle cx={'10%'} cy={'10%'} r={10} fill={'white'} />
             <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
             <circle cx={'-10%'} cy={'10%'} r={10} fill={'black'} />
@@ -153,7 +153,6 @@ import { onMount } from "svelte";
     .wrap{
         position: relative;
         height: var(--zoom);
-        width: var(--zoom);
         transform: translate(var(--offsetX), var(--offsetY));
         background-color: aqua;
         
@@ -169,7 +168,5 @@ import { onMount } from "svelte";
     img{
         display: block;
         height: 100%;
-        width: 100%;
-        object-fit: contain;
     }
 </style>
