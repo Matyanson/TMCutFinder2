@@ -1,15 +1,17 @@
-<div class="box"><!--to keep size relative to this, not the outside wrap-->
-    <div class="wrap" style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}>
+<div class="box"style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}>
+    <div class="wrap">
+        <div class="canvas">
             <svg bind:this={svg} on:contextmenu|preventDefault={()=>{}} on:wheel|nonpassive={(e)=>{ if(space) e.preventDefault();}}>
-            <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
-            </marker> 
-                <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)} : ${Math.floor(m.y)}`}</text> 
-            <circle cx={'10%'} cy={'10%'} r={10} fill={'white'} />
-            <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
-            <circle cx={'-10%'} cy={'10%'} r={10} fill={'black'} />
-        </svg>
-            <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
+                <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
+                </marker> 
+                    <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)} : ${Math.floor(m.y)}`}</text> 
+                <circle cx={'10%'} cy={'10%'} r={10} fill={'white'} />
+                <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
+                <circle cx={'-10%'} cy={'10%'} r={10} fill={'black'} />           
+            </svg>
+                <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
+        </div>
     </div>
 </div>
 <svelte:window on:keydown={onKeyDown} on:keyup={onKeyUp} on:mousemove={handleMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:wheel={handleWheel}/>
@@ -142,20 +144,28 @@ import { onMount } from "svelte";
 </script>
 <style>
     .box{
-        display: flex;
+        position: relative;
         height: 100%;
         width: 100%;
-        flex-flow: column;
-        justify-content: center;
-        align-items: center;
         user-select: none;
     }
     .wrap{
-        position: relative;
+        position: absolute;
+        width: 100%;
         height: var(--zoom);
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .canvas{
+        position: relative;
+        height: 100%;
         transform: translate(var(--offsetX), var(--offsetY));
         background-color: aqua;
-        
     }
     svg{
         position: absolute;
