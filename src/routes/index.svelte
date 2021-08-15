@@ -1,5 +1,5 @@
 <script context="module">
-import Canvas from "src/components/Editor/Canvas.svelte";
+import Editor from "src/components/Editor/index.svelte";
     export const prerender = true;
 </script>
 <script lang="ts">
@@ -9,18 +9,14 @@ import Canvas from "src/components/Editor/Canvas.svelte";
     <meta name="description" content="Welcome to TMCutFinder!">
 </svelte:head>
 
-<h1>CutFinder</h1>
-
-<div class="wrap">
-    <Canvas/>
+<div class="box">
+    <Editor />
 </div>
 
 <style>
-    .wrap{
-        height: 500px;
-        width: 900px;
-        resize: both;
+    .box{
         overflow: hidden;
-        border: 2px solid crimson;
+        width: 100%;
+        height: 100vh;
     }
 </style>
