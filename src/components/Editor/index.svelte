@@ -7,7 +7,7 @@
     </div>
 </div>
 <script lang="ts">
-import Canvas from "./Canvas.svelte";
+import Canvas from "./CanvasPosition.svelte";
 import Toolbar from "./Toolbar.svelte";
 </script>
 

@@ -11,7 +11,6 @@
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
-import { onMount } from "svelte";
 
     export let m: Coords;
     export let unit: number;
