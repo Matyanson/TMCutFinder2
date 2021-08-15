@@ -18,5 +18,7 @@ import Editor from "src/components/Editor/index.svelte";
         overflow: hidden;
         width: 100%;
         height: 100vh;
+
+        z-index: 10;
     }
 </style>

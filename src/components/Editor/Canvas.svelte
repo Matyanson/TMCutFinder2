@@ -1,7 +1,10 @@
-<div class="box"style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}>
+<div 
+class="box" class:cam={$toolIndex == 3} style={`--zoom: ${scale * 100}%; --offsetX: ${position.x}%; --offsetY: ${position.y}%`}
+on:mousemove={handleMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:wheel={handleWheel}
+>
     <div class="wrap">
         <div class="canvas">
-            <svg bind:this={svg} on:contextmenu|preventDefault={()=>{}} on:wheel|nonpassive={(e)=>{ if(space) e.preventDefault();}}>
+            <svg bind:this={svg} on:contextmenu|preventDefault={()=>{}} on:wheel|nonpassive={(e)=>{ if($toolIndex == 3) e.preventDefault();}}>
                 <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                     <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
                 </marker> 
@@ -14,10 +17,11 @@
         </div>
     </div>
 </div>
-<svelte:window on:keydown={onKeyDown} on:keyup={onKeyUp} on:mousemove={handleMouseMove} on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:wheel={handleWheel}/>
+<svelte:window on:keydown={onKeyDown} on:keyup={onKeyUp}/>
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
+import { toolIndex } from "src/store";
 
 import { sizeTracker } from "src/utils/dom";
 import { onMount } from "svelte";
@@ -36,10 +40,6 @@ import { onMount } from "svelte";
 
     //help
     let helpPoint: Coords = {x: 0,y: 0};
-
-
-    //keyboard
-    let space = false;
 
     const observer = sizeTracker();
 
@@ -86,16 +86,12 @@ import { onMount } from "svelte";
                 break;
             case ' ':
                 e.preventDefault();
-                space = true;
                 break;
         }
     }
 
     const onKeyUp = (e: KeyboardEvent) => {
         switch(e.key){
-            case ' ':
-                space = false;
-                break;
         }
     }
 
@@ -116,7 +112,7 @@ import { onMount } from "svelte";
     }
     const handleMouseMove = (e: MouseEvent) => {
         saveMousePosition(e.clientX, e.clientY);
-        if(space){
+        if($toolIndex == 3){
             if(m1Down){
                 const distX = m.x - helpPoint.x;
                 const distY = m.y - helpPoint.y;
@@ -135,7 +131,7 @@ import { onMount } from "svelte";
         }
     }
     const handleWheel = (e: WheelEvent) => {
-        if(space){
+        if($toolIndex == 3){
             e.deltaY < 0 ?
             scale *= 1.1 :
             scale /= 1.1;
@@ -148,6 +144,11 @@ import { onMount } from "svelte";
         height: 100%;
         width: 100%;
         user-select: none;
+        overflow: hidden;
+        cursor:crosshair;
+    }
+    .box.cam{
+        cursor:grabbing;
     }
     .wrap{
         position: absolute;
