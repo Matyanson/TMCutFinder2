@@ -21,6 +21,8 @@ import Toolbar from "./Toolbar.svelte";
         display: flex;
         flex-flow: column;
         background: #155053;
+        user-select: none;
+        -webkit-user-drag: none;
     }
     .canvas{
         flex: 1;

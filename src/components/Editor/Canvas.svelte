@@ -11,24 +11,23 @@
     <svg>
         <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
         <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)}:${Math.floor(m.y)}`}</text>
-        <circle cx={'10%'} cy={'10%'} r={10} fill={'white'} />
-        <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
-        <circle cx={'-10%'} cy={'10%'} r={10} fill={'black'} />           
     </svg>
     <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
 </div>
-<svelte:window on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:wheel={()=>handleResize()} />
+<svelte:window on:wheel={()=>handleResize()} />
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
+import { paths, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
+import { getDist } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
 
     const context: any = getContext('canvas');
 
     //svg
     let svg: Element;
-    let outerDiv: Element | Window;
+    let outerDiv: Element;
     let aspect_ratio = 16/9;
     let unit = 1080 / 100 //1% of VH
 
@@ -37,6 +36,10 @@ import { getContext, onMount } from "svelte";
     let m1Down = false;
     let m2Down = false;
 
+    //canvas objects
+    const minDist = 1;
+    let lastPoint: Coords = {x: 0, y: 0};
+
     const observer = sizeTracker();
 
     onMount(() => {
@@ -44,32 +47,79 @@ import { getContext, onMount } from "svelte";
             const box: Element = context.getBox();
             outerDiv = box;
         } else {
-            outerDiv = window;
+            outerDiv = svg;
         }
         if(svg){
-            const svgRect = svg.getBoundingClientRect();
-            aspect_ratio =  svgRect.width / svgRect.height;
             handleResize();
 
             observer.init(svg, handleResize);
         }
         outerDiv.addEventListener('mousemove', onMouseMove);
+        outerDiv.addEventListener('mousedown', onMouseDown);
+        outerDiv.addEventListener('mouseup', onMouseUp);
     })
     
     const onMouseDown = (e: MouseEvent) => {
         e.button === 0 ?
         m1Down = true :
         m2Down = true;
+
+        switch($toolIndex){
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            
+        }
     }
     const onMouseUp = (e: MouseEvent) => {
         e.button === 0 ?
         m1Down = false :
         m2Down = false;
+
+        switch($toolIndex){
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            
+        }
     }
     const onMouseMove = (e: MouseEvent) => {
         saveMousePosition(e.clientX, e.clientY);
+
+        switch($toolIndex){
+            case 0:
+                break;
+            case 1:
+                if(m1Down && getDist(lastPoint, m) > minDist){
+                    if($paths[paths.selected]){
+                        paths.addPoints(paths.selected, m)
+                    } else {
+                        const newIndex = paths.add({points: [m]});
+                        paths.selected = newIndex;
+                    }
+                    lastPoint = {...m};
+                }
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            
+        }
     }
     const handleResize = () => {
+        const svgRect = svg.getBoundingClientRect();
+        aspect_ratio =  svgRect.width / svgRect.height;
         unit = svg.clientHeight / 100;
     }
 
@@ -79,6 +129,15 @@ import { getContext, onMount } from "svelte";
             x: (mouseX - svgRect.left) / unit,
             y: (mouseY - svgRect.top) / unit
         }
+    }
+
+    const pointsToPath = (points: Coords[]) => {
+        let path = "";
+        let pointsCopy = [...points];
+        for(let p of pointsCopy){
+            path += ` ${p.x / aspect_ratio},${p.y}`;
+        }
+        return path;
     }
 </script>
 
@@ -102,5 +161,11 @@ import { getContext, onMount } from "svelte";
         height: 100%;
         user-select: none;
         -webkit-user-drag: none;
+    }
+    svg polyline {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: 0.2s;
     }
 </style>
