@@ -10,7 +10,7 @@
     </svg>
     <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
 </div>
-<svelte:window on:mousedown={onMouseDown} on:mouseup={onMouseUp} />
+<svelte:window on:mousedown={onMouseDown} on:mouseup={onMouseUp} on:wheel={()=>handleResize()} />
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
