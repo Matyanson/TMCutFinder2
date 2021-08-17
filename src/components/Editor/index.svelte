@@ -3,11 +3,14 @@
         <Toolbar />
     </div>
     <div class="canvas">
-        <Canvas />
+        <CanvasTransformer>
+            <Canvas />
+        </CanvasTransformer>
     </div>
 </div>
 <script lang="ts">
-import Canvas from "./CanvasPosition.svelte";
+import Canvas from "./Canvas.svelte";
+import CanvasTransformer from "./DisplayTransformer.svelte";
 import Toolbar from "./Toolbar.svelte";
 </script>
 
