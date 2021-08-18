@@ -126,7 +126,6 @@ import { onMount, setContext } from "svelte";
         }
     }
     const handleWheel = (e: WheelEvent) => {
-        console.log(e.deltaY);
         if($toolIndex == 3){
             e.preventDefault();
             e.deltaY < 0 ?
