@@ -126,11 +126,12 @@ import { onMount, setContext } from "svelte";
         }
     }
     const handleWheel = (e: WheelEvent) => {
+        console.log(e.deltaY);
         if($toolIndex == 3){
             e.preventDefault();
             e.deltaY < 0 ?
-            scale *= 1.1 :
-            scale /= 1.1;
+            scale *= 1.05 :
+            scale /= 1.05;
         }
     }
 </script>
