@@ -9,14 +9,13 @@ export const toolIndex = writable(0);
 export const paths = createPaths();
 
 function createPaths() {
-    const { set, update, subscribe} = writable<Path[]>([]);
+    const { set, update, subscribe} = wStorage<Path[]>('paths', []);
 
     let selected = -1
 
     return {
         subscribe,
         selected,
-        select: (index: number) => selected = index,
         add: (newPath: Path): number => {
             update(old => {
                 const n = [...old, newPath];
@@ -30,5 +29,6 @@ function createPaths() {
                 return old;
             })
         },
+        reset: () => set([])
     }
 }
