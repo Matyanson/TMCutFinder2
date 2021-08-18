@@ -1,12 +1,11 @@
 <div class="canvas" bind:this={svg}>
     <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="2.5" markerHeight="2.5" orient="auto-start-reverse">
             <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
         </marker>
         {#each $paths as path}
-            <polyline class='path' points={pointsToPath(path.points)} vector-effect="non-scaling-stroke"  stroke-width='10px' fill='none' stroke={'#1b36ca'}/>
+            <polyline class='path' points={pointsToPath(path.points)} vector-effect="non-scaling-stroke"  stroke-width='10px' fill='none' stroke={'#1b36ca'} marker-end='url(#arrow)'/>
         {/each}
-        <polyline class='path' points='0,0 0,100 100,100 100,0' vector-effect="non-scaling-stroke"  stroke-width='10px' fill='none' stroke={'#1b36ca'}/>
     </svg>
     <svg>
         <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
@@ -101,12 +100,10 @@ import { getContext, onMount } from "svelte";
                 break;
             case 1:
                 if(m1Down && getDist(lastPoint, m) > minDist){
-                    if($paths[paths.selected]){
-                        paths.addPoints(paths.selected, m)
-                    } else {
-                        const newIndex = paths.add({points: [m]});
-                        paths.selected = newIndex;
+                    if(!$paths[paths.selected]){
+                        paths.selected = paths.add();
                     }
+                    paths.addPoints(paths.selected, m);
                     lastPoint = {...m};
                 }
                 break;

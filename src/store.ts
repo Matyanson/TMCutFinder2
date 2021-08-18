@@ -16,14 +16,20 @@ function createPaths() {
     return {
         subscribe,
         selected,
-        add: (newPath: Path): number => {
+        add: function (newPath: Path = {points: []}): number {
             update(old => {
                 const n = [...old, newPath];
                 return n;
             })
             return get(paths).length -1;
         },
-        addPoints: (index: number, points: Coords | Coords[]) => {
+        addNew: function (newPath: Path = {points: []}) {
+            //prevent from storing empty paths
+            if(get(paths)[selected] == newPath) return selected;
+            selected = this.add(newPath);
+            return selected;
+        },
+        addPoints: function (index: number, points: Coords | Coords[]) {
             update(old => {
                 old[index].points = [...old[index].points, ...[].concat(points)];
                 return old;
