@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
-import { paths, toolIndex } from "src/store";
+import { paths, selectedPath, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
 import { getDist } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
@@ -100,10 +100,10 @@ import { getContext, onMount } from "svelte";
                 break;
             case 1:
                 if(m1Down && getDist(lastPoint, m) > minDist){
-                    if(!$paths[paths.selected]){
-                        paths.selected = paths.add();
+                    if(!$paths[$selectedPath]){
+                        $selectedPath = paths.add();
                     }
-                    paths.addPoints(paths.selected, m);
+                    paths.addPoints($selectedPath, m);
                     lastPoint = {...m};
                 }
                 break;

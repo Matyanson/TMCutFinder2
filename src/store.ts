@@ -8,10 +8,13 @@ export const toolIndex = writable(0);
 
 export const paths = createPaths();
 
-function createPaths() {
-    const { set, update, subscribe} = wStorage<Path[]>('paths', []);
+export const selectedPath = paths.selected;
 
-    let selected = -1
+
+
+function createPaths() {
+    const selected = writable(-1);
+    const {subscribe, set, update} = wStorage<Path[]>('paths', []);
 
     return {
         subscribe,
@@ -24,10 +27,13 @@ function createPaths() {
             return get(paths).length -1;
         },
         addNew: function (newPath: Path = {points: []}) {
+            const objEqual = (a, b) => Object.entries(a).sort()+'' == Object.entries(b).sort()+'';
             //prevent from storing empty paths
-            if(get(paths)[selected] == newPath) return selected;
-            selected = this.add(newPath);
-            return selected;
+            const curPath = get(paths)[get(selected)];
+            if(curPath && objEqual(curPath, newPath)) return get(selected);
+            const newIndex = this.add(newPath);
+            selected.set(newIndex);
+            return newIndex;
         },
         addPoints: function (index: number, points: Coords | Coords[]) {
             update(old => {
