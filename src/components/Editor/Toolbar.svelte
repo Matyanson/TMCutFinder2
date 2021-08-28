@@ -21,7 +21,7 @@
 <svelte:window on:keydown={onKeyDown} />
 
 <script lang="ts">
-    import { paths, selectedPath, toolIndex } from 'src/store'
+    import { nodes, paths, selectedPath, toolIndex } from 'src/store'
 import KeyBtn from '../KeyBtn.svelte';
     let lastTool = 0;
     
@@ -38,6 +38,7 @@ import KeyBtn from '../KeyBtn.svelte';
         switch(e.key){
             case 'd':
                 paths.reset();
+                nodes.reset();
                 break;
         }
     }

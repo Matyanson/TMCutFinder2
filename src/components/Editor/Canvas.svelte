@@ -11,7 +11,6 @@
         {/each}
     </svg>
     <svg class="top">
-        <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
         {#each $nodes as node}
             <circle cx={`${node.coords.x / aspect_ratio}%`} cy={`${node.coords.y}%`} r={10} fill={'white'} />
         {/each}
@@ -81,8 +80,9 @@ import { getContext, onMount } from "svelte";
             case 1:
                 break;
             case 2:
-                if(hoverPath > -1)
-                    nodes.addNew(fakeNode);
+                if(hoverPath < 0) return;
+                nodes.addNew(fakeNode, hoverPath);
+                paths.addNew();
                 break;
             case 3:
                 break;

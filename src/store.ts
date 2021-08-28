@@ -44,6 +44,21 @@ function createPaths() {
                 return old;
             })
         },
+        edit: function (index: number, path: Path) {
+            update(old => {
+                old[index] = path;
+                return old;
+            })
+        },
+        split: function (index: number, pointIndex: number): number {
+            const chosenPath = get(paths)[index];
+            const splitPoints = [chosenPath.points.slice(0, pointIndex + 1), chosenPath.points.slice(pointIndex)];
+            update(old => {
+                old[index].points = splitPoints[0];
+                return old;
+            })
+            return this.addNew({points: splitPoints[1]});
+        },
         reset: () => set([])
     }
 }
@@ -63,12 +78,18 @@ function createNodes() {
             })
             return get(nodes).length -1;
         },
-        addNew: function (coords: Coords) {
-            return this.add({
+        addNew: function (coords: Coords, pathIndex: number) {
+            const pointIndex = get(paths)[pathIndex].points.findIndex(p => p == coords);
+            if(pointIndex < 0) return -1;
+            const newPathIndex = paths.split(pathIndex, pointIndex);
+            this.add({
                 coords,
                 type: 'normal',
-                paths: []
-            });
+                paths: [
+                    { index: pathIndex, start: false },
+                    { index: newPathIndex, start: true }
+                ]
+            })
         },
         addPaths: function (index: number, paths: PathNode | PathNode[]) {
             update(old => {
