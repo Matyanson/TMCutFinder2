@@ -83,7 +83,6 @@ import { getContext, onMount } from "svelte";
             case 1:
                 if(hoverPath > -1){
                     const nodeIndex = nodes.addNew(fakeNode, hoverPath);
-                    console.log(`adding ${fakeNode.x}:${fakeNode.y} to ${$selectedPath}`);
                     paths.addPoints($selectedPath, fakeNode);
                     nodes.addPaths(nodeIndex, {index: $selectedPath, start: false});
                     paths.addNew();

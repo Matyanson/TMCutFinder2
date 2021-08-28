@@ -24,8 +24,10 @@ function createPaths() {
         selected,
         add: function (newPath: Path = {points: []}): number {
             update(old => {
-                const n = [...old, newPath];
-                return n;
+                const last = old[old.length - 1]    
+                if(last && last.points.length < 1)          //use empty paths
+                    return [...old.slice(0, old.length - 1), newPath];
+                return [...old, newPath];
             })
             return get(paths).length -1;
         },
@@ -57,7 +59,9 @@ function createPaths() {
                 old[index].points = splitPoints[1];
                 return old;
             })
-            return this.add({points: splitPoints[0]});
+            const newIndex =  this.add({points: splitPoints[0]});
+            nodes.changePathIndex({ index, start: true}, newIndex);
+            return newIndex;
         },
         reset: () => set([])
     }
@@ -73,7 +77,6 @@ function createNodes() {
         add: function (newNode: INode): number {
             update(old => {
                 const n = [...old, newNode];
-                console.log(n);
                 return n;
             })
             return get(nodes).length -1;
@@ -95,6 +98,20 @@ function createNodes() {
             update(old => {
                 old[index].paths = [...old[index].paths, ...[].concat(paths)];
                 return old;
+            })
+        },
+        changePathIndex: function (targetPathNode: PathNode, newIndex: number) {
+            update(old => {
+                return old.map( node => {
+                    return {
+                        ...node,
+                        paths: node.paths.map( p => {
+                            return p.index == targetPathNode.index && p.start == targetPathNode.start ?
+                                { index: newIndex, start: p.start} :
+                                p;
+                        })
+                    }
+                })
             })
         },
         reset: () => set([])
