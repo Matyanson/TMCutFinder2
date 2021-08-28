@@ -5,13 +5,16 @@
         </marker>
         {#each $paths as path, i}
             <polyline 
-            class='path' points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={()=> hoverPath = -1}
-            vector-effect="non-scaling-stroke"  stroke-width='10px' fill='none' stroke={'#1b36ca'} marker-end='url(#arrow)'
+            class='path' points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={() => hoverPath = -1}
+            vector-effect="non-scaling-stroke" stroke-width='10px' fill='none' stroke={'#1b36ca'} marker-end='url(#arrow)'
             />
         {/each}
     </svg>
     <svg class="top">
         <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
+        {#if hoverPath > -1}
+        <circle class="transparent" cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} fill={'white'} />
+        {/if}
         <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)}:${Math.floor(m.y)}`}</text>
         <text x={'0%'} y={'95%'} fill={'white'}>{`${hoverPath}`}</text>
     </svg>
@@ -23,7 +26,7 @@
 import type Coords from "src/models/Coords";
 import { paths, selectedPath, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
-import { getDist } from "src/utils/functions";
+import { getDist, nearestIndex } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
 
     const context: any = getContext('canvas');
@@ -41,8 +44,9 @@ import { getContext, onMount } from "svelte";
 
     //canvas objects
     const minDist = 1;
-    let lastPoint: Coords = {x: 0, y: 0};
     let hoverPath = -1;
+    let lastPoint: Coords = {x: 0, y: 0};
+    let fakeNode: Coords = {x: 0, y: 0};
 
     const observer = sizeTracker();
 
@@ -99,6 +103,7 @@ import { getContext, onMount } from "svelte";
     }
     const onMouseMove = (e: MouseEvent) => {
         saveMousePosition(e.clientX, e.clientY);
+        calcFakeNode();
 
         switch($toolIndex){
             case 0:
@@ -130,6 +135,15 @@ import { getContext, onMount } from "svelte";
         m = {
             x: (mouseX - svgRect.left) / unit,
             y: (mouseY - svgRect.top) / unit
+        }
+    }
+
+    const calcFakeNode = () => {
+        if($paths[hoverPath] && ($toolIndex == 1 || $toolIndex == 2)) {
+            const currPath = $paths[hoverPath];
+            const nearestPointIndex = nearestIndex(m, currPath.points);
+            if(hoverPath == $selectedPath && currPath.points.length - nearestPointIndex < 5) return;
+            fakeNode = currPath.points[nearestPointIndex] ?? {x: 0, y: 0};
         }
     }
 
@@ -173,5 +187,13 @@ import { getContext, onMount } from "svelte";
         stroke-linecap: round;
         stroke-linejoin: round;
         transition: 0.2s;
+    }
+    svg *:hover {
+        stroke: #14258a;
+    }
+    .transparent{
+        opacity: 0.7;
+        pointer-events: none;
+        user-select: none;
     }
 </style>

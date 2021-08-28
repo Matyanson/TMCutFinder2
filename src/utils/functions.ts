@@ -9,3 +9,18 @@ export const getDist = (pointA: Coords, pointB: Coords) => {
 export const addPoints = (pointA: Coords, pointB: Coords) => {
     return {x: pointA.x + pointB.x, y: pointA.y + pointB.y}
 }
+
+export const nearestIndex = (pointA: Coords, points: Coords[]) => {
+    if(!points[0]) return -1;
+    let res = 0;
+    let shortestDist = getDist(pointA, points[0]);
+
+    for (let i = 1; i < points.length; i++) {
+        const newDist = getDist(pointA, points[i]);
+        if(newDist < shortestDist) {
+            shortestDist = newDist;
+            res = i;
+        }
+    }
+    return res;
+}
