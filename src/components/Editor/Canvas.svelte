@@ -1,15 +1,19 @@
 <div class="canvas" bind:this={svg}>
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+    <svg class="bottom" viewBox="0 0 100 100" preserveAspectRatio="none">
         <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="2.5" markerHeight="2.5" orient="auto-start-reverse">
             <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
         </marker>
-        {#each $paths as path}
-            <polyline class='path' points={pointsToPath(path.points)} vector-effect="non-scaling-stroke"  stroke-width='10px' fill='none' stroke={'#1b36ca'} marker-end='url(#arrow)'/>
+        {#each $paths as path, i}
+            <polyline 
+            class='path' points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={()=> hoverPath = -1}
+            vector-effect="non-scaling-stroke"  stroke-width='10px' fill='none' stroke={'#1b36ca'} marker-end='url(#arrow)'
+            />
         {/each}
     </svg>
-    <svg>
+    <svg class="top">
         <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
         <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)}:${Math.floor(m.y)}`}</text>
+        <text x={'0%'} y={'95%'} fill={'white'}>{`${hoverPath}`}</text>
     </svg>
     <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
 </div>
@@ -28,7 +32,7 @@ import { getContext, onMount } from "svelte";
     let svg: Element;
     let outerDiv: Element;
     let aspect_ratio = 16/9;
-    let unit = 1080 / 100 //1% of VH
+    let unit = 1080 / 100; //1% of VH
 
     //mouse
     let m: Coords = {x: 0, y: 0};
@@ -38,6 +42,7 @@ import { getContext, onMount } from "svelte";
     //canvas objects
     const minDist = 1;
     let lastPoint: Coords = {x: 0, y: 0};
+    let hoverPath = -1;
 
     const observer = sizeTracker();
 
@@ -144,14 +149,18 @@ import { getContext, onMount } from "svelte";
         height: 100%;
         background-color: aqua;
     }
-    svg{
+    svg {
         user-select: none;
+        pointer-events: none;
         position: absolute;
         top: 0;
         left: 0;
         width: 100%; 
         height: 100%;
         overflow: visible;
+    }
+    svg * {
+        pointer-events: auto;
     }
     img{
         display: block;
