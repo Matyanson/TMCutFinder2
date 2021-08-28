@@ -1,27 +1,27 @@
 <div class="toolbar">
     <div style="color:white">{$selectedPath > -1 ? $selectedPath : ($selectedNode > -1 ? $selectedNode : -1)}</div>
     <div class="tools">
-        <KeyBtn on={$toolIndex == 0} key='q' onSwitch={() => $toolIndex = 0}>Select</KeyBtn>
-        <KeyBtn on={$toolIndex == 1} key='w' onSwitch={() => $toolIndex = 1}>Path</KeyBtn>
-        <KeyBtn on={$toolIndex == 2} key='e' onSwitch={() => $toolIndex = 2}>Node</KeyBtn>
-        <KeyBtn on={$toolIndex == 3} key=' ' onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
+        <KeyBtn key='q' on={$toolIndex == 0}  onSwitch={() => $toolIndex = 0}>Select</KeyBtn>
+        <KeyBtn key='w' on={$toolIndex == 1} onSwitch={() => $toolIndex = 1}>Path</KeyBtn>
+        <KeyBtn key='e' on={$toolIndex == 2} onSwitch={() => $toolIndex = 2}>Node</KeyBtn>
+        <KeyBtn key=' ' on={$toolIndex == 3} onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
     </div>
     <div class="options">
     {#if $toolIndex == 1}
         <KeyBtn key='a' onPress={() => paths.addNew()}>Add</KeyBtn>
-        <KeyBtn key='s' onPress={() => {}}>Normal</KeyBtn>
-        <KeyBtn key='d' onPress={() => {}}>1Way</KeyBtn>
+        <KeyBtn key='s' on={$pathType == 'normal'} onPress={() => $pathType = 'normal'}>Normal</KeyBtn>
+        <KeyBtn key='d' on={$pathType == 'oneway'} onPress={() => $pathType = 'oneway'}>1Way</KeyBtn>
     {:else if $toolIndex == 2}
-        <KeyBtn key='a' onPress={() => {}}>Normal</KeyBtn>
-        <KeyBtn key='s' onPress={() => {}}>CP</KeyBtn>
-        <KeyBtn key='d' onPress={() => {}}>RingCP</KeyBtn>
+        <KeyBtn key='a' on={$nodeType == 'normal'} onPress={() => $nodeType = 'normal'}>Normal</KeyBtn>
+        <KeyBtn key='s' on={$nodeType == 'cp'} onPress={() => $nodeType = 'cp'}>CP</KeyBtn>
+        <KeyBtn key='d' on={$nodeType == 'ring'} onPress={() => $nodeType = 'ring'}>RingCP</KeyBtn>
     {/if}
     </div>
 </div>
 <svelte:window on:keydown={onKeyDown} />
 
 <script lang="ts">
-    import { nodes, paths, selectedNode, selectedPath, toolIndex } from 'src/store'
+    import { nodes, nodeType, paths, pathType, selectedNode, selectedPath, toolIndex } from 'src/store'
 import KeyBtn from '../KeyBtn.svelte';
     let lastTool = 0;
     
@@ -36,7 +36,7 @@ import KeyBtn from '../KeyBtn.svelte';
 
     const onKeyDown = (e: KeyboardEvent) => {
         switch(e.key){
-            case 'd':
+            case 'f':
                 paths.reset();
                 nodes.reset();
                 break;

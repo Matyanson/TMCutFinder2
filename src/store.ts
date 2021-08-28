@@ -1,4 +1,4 @@
-import { get, writable, Writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import type Coords from "./models/Coords";
 import type { INode, PathNode } from "./models/Node";
 import type { Path } from "./models/Path";
@@ -12,17 +12,21 @@ export const nodes = createNodes();
 
 export const selectedPath = paths.selected;
 export const selectedNode = nodes.selected;
+export const pathType = paths.type;
+export const nodeType = nodes.type;
 
 
 
 function createPaths() {
     const selected = writable(-1);
+    const type = writable<Path['type']>('normal')
     const {subscribe, set, update} = wStorage<Path[]>('paths', []);
 
     return {
         subscribe,
         selected,
-        add: function (newPath: Path = {points: []}): number {
+        type,
+        add: function (newPath: Path = {type: get(type), points: []}): number {
             update(old => {
                 const last = old[old.length - 1]    
                 if(last && last.points.length < 1)          //use empty paths
@@ -31,7 +35,7 @@ function createPaths() {
             })
             return get(paths).length -1;
         },
-        addNew: function (newPath: Path = {points: []}) {
+        addNew: function (newPath: Path = {type: get(type), points: []}) {
             const objEqual = (a, b) => Object.entries(a).sort()+'' == Object.entries(b).sort()+'';
             //prevent from storing empty paths
             const curPath = get(paths)[get(selected)];
@@ -59,7 +63,7 @@ function createPaths() {
                 old[index].points = splitPoints[1];
                 return old;
             })
-            const newIndex =  this.add({points: splitPoints[0]});
+            const newIndex =  this.add({ type: get(type), points: splitPoints[0]});
             nodes.changePathIndex({ index, start: true}, newIndex);
             return newIndex;
         },
@@ -69,11 +73,13 @@ function createPaths() {
 
 function createNodes() {
     const selected = writable(-1);
+    const type = writable<INode['type']>('normal')
     const {subscribe, set, update} = wStorage<INode[]>('nodes', []);
 
     return {
         subscribe,
         selected,
+        type,
         add: function (newNode: INode): number {
             update(old => {
                 const n = [...old, newNode];
@@ -87,7 +93,7 @@ function createNodes() {
             const newPathIndex = paths.split(pathIndex, pointIndex);
             return this.add({
                 coords,
-                type: 'normal',
+                type: get(type),
                 paths: [
                     { index: pathIndex, start: true },
                     { index: newPathIndex, start: false }
