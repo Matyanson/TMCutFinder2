@@ -5,13 +5,16 @@
         </marker>
         {#each $paths as path, i}
             <polyline 
-            class='path' points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={() => hoverPath = -1}
+            class='path' class:selected={i == $selectedPath} points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={() => hoverPath = -1}
             vector-effect="non-scaling-stroke" stroke-width='10px' fill='none' stroke={'#1b36ca'} marker-end='url(#arrow)'
             />
         {/each}
     </svg>
     <svg class="top">
         <circle cx={'50%'} cy={'50%'} r={10} fill={'white'} />
+        {#each $nodes as node}
+            <circle cx={`${node.coords.x / aspect_ratio}%`} cy={`${node.coords.y}%`} r={10} fill={'white'} />
+        {/each}
         {#if hoverPath > -1}
         <circle class="transparent" cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} fill={'white'} />
         {/if}
@@ -24,7 +27,7 @@
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
-import { paths, selectedPath, toolIndex } from "src/store";
+import { nodes, paths, selectedPath, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
 import { getDist, nearestIndex } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
@@ -78,6 +81,8 @@ import { getContext, onMount } from "svelte";
             case 1:
                 break;
             case 2:
+                if(hoverPath > -1)
+                    nodes.addNew(fakeNode);
                 break;
             case 3:
                 break;
@@ -187,6 +192,9 @@ import { getContext, onMount } from "svelte";
         stroke-linecap: round;
         stroke-linejoin: round;
         transition: 0.2s;
+    }
+    svg polyline.selected{
+        stroke: #6c82ff;
     }
     svg *:hover {
         stroke: #14258a;

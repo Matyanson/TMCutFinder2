@@ -1,5 +1,6 @@
 import { get, writable, Writable } from "svelte/store";
 import type Coords from "./models/Coords";
+import type { INode, PathNode } from "./models/Node";
 import type { Path } from "./models/Path";
 import { wStorage } from "./utils/writableStores";
 
@@ -7,8 +8,10 @@ import { wStorage } from "./utils/writableStores";
 export const toolIndex = writable(0);
 
 export const paths = createPaths();
+export const nodes = createNodes();
 
 export const selectedPath = paths.selected;
+export const selectedNode = nodes.selected;
 
 
 
@@ -38,6 +41,38 @@ function createPaths() {
         addPoints: function (index: number, points: Coords | Coords[]) {
             update(old => {
                 old[index].points = [...old[index].points, ...[].concat(points)];
+                return old;
+            })
+        },
+        reset: () => set([])
+    }
+}
+
+function createNodes() {
+    const selected = writable(-1);
+    const {subscribe, set, update} = wStorage<INode[]>('nodes', []);
+
+    return {
+        subscribe,
+        selected,
+        add: function (newNode: INode): number {
+            update(old => {
+                const n = [...old, newNode];
+                console.log(n);
+                return n;
+            })
+            return get(nodes).length -1;
+        },
+        addNew: function (coords: Coords) {
+            return this.add({
+                coords,
+                type: 'normal',
+                paths: []
+            });
+        },
+        addPaths: function (index: number, paths: PathNode | PathNode[]) {
+            update(old => {
+                old[index].paths = [...old[index].paths, ...[].concat(paths)];
                 return old;
             })
         },
