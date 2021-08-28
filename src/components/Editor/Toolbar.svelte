@@ -1,5 +1,5 @@
 <div class="toolbar">
-    <div style="color:white">{$selectedPath}</div>
+    <div style="color:white">{$selectedPath > -1 ? $selectedPath : ($selectedNode > -1 ? $selectedNode : -1)}</div>
     <div class="tools">
         <KeyBtn on={$toolIndex == 0} key='q' onSwitch={() => $toolIndex = 0}>Select</KeyBtn>
         <KeyBtn on={$toolIndex == 1} key='w' onSwitch={() => $toolIndex = 1}>Path</KeyBtn>
@@ -21,7 +21,7 @@
 <svelte:window on:keydown={onKeyDown} />
 
 <script lang="ts">
-    import { nodes, paths, selectedPath, toolIndex } from 'src/store'
+    import { nodes, paths, selectedNode, selectedPath, toolIndex } from 'src/store'
 import KeyBtn from '../KeyBtn.svelte';
     let lastTool = 0;
     

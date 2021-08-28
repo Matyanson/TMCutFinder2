@@ -11,14 +11,14 @@
         {/each}
     </svg>
     <svg class="top">
-        {#each $nodes as node}
-            <circle cx={`${node.coords.x / aspect_ratio}%`} cy={`${node.coords.y}%`} r={10} fill={'white'} />
+        {#each $nodes as node, i}
+            <circle cx={`${node.coords.x / aspect_ratio}%`} cy={`${node.coords.y}%`} on:mouseenter={() => hoverNode = i} on:mouseleave={() => hoverNode = -1} r={10} fill={'white'} />
         {/each}
         {#if hoverPath > -1}
         <circle class="transparent" cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} fill={'white'} />
         {/if}
         <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)}:${Math.floor(m.y)}`}</text>
-        <text x={'0%'} y={'95%'} fill={'white'}>{`${hoverPath}`}</text>
+        <text x={'0%'} y={'95%'} fill={'white'}>{`${hoverPath} ${hoverNode}`}</text>
     </svg>
     <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
 </div>
@@ -26,11 +26,10 @@
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
-import { nodes, paths, selectedPath, toolIndex } from "src/store";
+import { nodes, paths, selectedNode, selectedPath, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
 import { getDist, nearestIndex } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
-import { get } from "svelte/store";
 
     const context: any = getContext('canvas');
 
@@ -48,6 +47,7 @@ import { get } from "svelte/store";
     //canvas objects
     const minDist = 1;
     let hoverPath = -1;
+    let hoverNode = -1;
     let lastPoint: Coords = {x: 0, y: 0};
     let fakeNode: Coords = {x: 0, y: 0};
 
@@ -77,6 +77,8 @@ import { get } from "svelte/store";
 
         switch($toolIndex){
             case 0:
+                $selectedPath = hoverPath > -1 ? hoverPath : -1;
+                $selectedNode = hoverNode > -1 ? hoverNode : -1;
                 break;
             case 1:
                 if(hoverPath > -1){
