@@ -81,12 +81,7 @@ import { getContext, onMount } from "svelte";
                 $selectedNode = hoverNode > -1 ? hoverNode : -1;
                 break;
             case 1:
-                if(hoverPath > -1){
-                    const nodeIndex = nodes.addNew(fakeNode, hoverPath);
-                    paths.addPoints($selectedPath, fakeNode);
-                    nodes.addPaths(nodeIndex, {index: $selectedPath, start: false});
-                    paths.addNew();
-                }
+                connectPath();
                 break;
             case 2:
                 if(hoverPath > -1){
@@ -169,6 +164,19 @@ import { getContext, onMount } from "svelte";
             path += ` ${p.x / aspect_ratio},${p.y}`;
         }
         return path;
+    }
+
+    const connectPath = () => {
+        if(hoverPath > -1){
+            const starts = $paths[$selectedPath].points.length < 1;
+            const nodeIndex = nodes.addNew(fakeNode, hoverPath);
+            paths.addPoints($selectedPath, fakeNode);
+
+            const pathIndex = starts ? paths.addNew() : $selectedPath;
+            nodes.addPaths(nodeIndex, {index: pathIndex, start: starts });
+            
+            if(!starts) paths.addNew();
+        }
     }
 </script>
 
