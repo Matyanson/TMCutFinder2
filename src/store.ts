@@ -54,10 +54,10 @@ function createPaths() {
             const chosenPath = get(paths)[index];
             const splitPoints = [chosenPath.points.slice(0, pointIndex + 1), chosenPath.points.slice(pointIndex)];
             update(old => {
-                old[index].points = splitPoints[0];
+                old[index].points = splitPoints[1];
                 return old;
             })
-            return this.addNew({points: splitPoints[1]});
+            return this.add({points: splitPoints[0]});
         },
         reset: () => set([])
     }
@@ -82,12 +82,12 @@ function createNodes() {
             const pointIndex = get(paths)[pathIndex].points.findIndex(p => p == coords);
             if(pointIndex < 0) return -1;
             const newPathIndex = paths.split(pathIndex, pointIndex);
-            this.add({
+            return this.add({
                 coords,
                 type: 'normal',
                 paths: [
-                    { index: pathIndex, start: false },
-                    { index: newPathIndex, start: true }
+                    { index: pathIndex, start: true },
+                    { index: newPathIndex, start: false }
                 ]
             })
         },

@@ -30,6 +30,7 @@ import { nodes, paths, selectedPath, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
 import { getDist, nearestIndex } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
+import { get } from "svelte/store";
 
     const context: any = getContext('canvas');
 
@@ -78,11 +79,19 @@ import { getContext, onMount } from "svelte";
             case 0:
                 break;
             case 1:
+                if(hoverPath > -1){
+                    const nodeIndex = nodes.addNew(fakeNode, hoverPath);
+                    console.log(`adding ${fakeNode.x}:${fakeNode.y} to ${$selectedPath}`);
+                    paths.addPoints($selectedPath, fakeNode);
+                    nodes.addPaths(nodeIndex, {index: $selectedPath, start: false});
+                    paths.addNew();
+                }
                 break;
             case 2:
-                if(hoverPath < 0) return;
-                nodes.addNew(fakeNode, hoverPath);
-                paths.addNew();
+                if(hoverPath > -1){
+                    nodes.addNew(fakeNode, hoverPath);
+                    paths.addNew();
+                }
                 break;
             case 3:
                 break;
