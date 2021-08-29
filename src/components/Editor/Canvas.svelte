@@ -226,7 +226,7 @@ import { getContext, onMount } from "svelte";
     svg circle {
         stroke-width: 3px;
         fill: #fff;
-        transition: 0.2s;
+        transition: stroke-width fill stroke 0.2s;
     }
     svg circle.cp {
         fill: #ffff00;
@@ -236,11 +236,11 @@ import { getContext, onMount } from "svelte";
         stroke: #ffff00;
         stroke-width: 6px;
     }
-    svg polyline.selected, circle.selected{
-        stroke: #6c82ff!important;
-    }
     svg polyline:hover, circle:hover {
         stroke: #14258a!important;
+    }
+    svg polyline.selected, circle.selected{
+        stroke: #6c82ff!important;
     }
     .transparent{
         opacity: 0.7;
