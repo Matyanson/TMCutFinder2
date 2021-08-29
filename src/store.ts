@@ -116,7 +116,7 @@ function createNodes() {
                         ...node,
                         paths: node.paths.map( p => {
                             const isTarget = () => p.index == targetIndex && (isStart && p.start || isEnd && !p.start);
-                            return isTarget ?
+                            return isTarget() ?
                                 { ...p, index: newIndex} :
                                 p;
                         })

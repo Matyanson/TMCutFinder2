@@ -173,9 +173,9 @@ import { getContext, onMount } from "svelte";
         if(hoverPath > -1){
             const starts = $paths[$selectedPath].points.length < 1;
             const nodeIndex = nodes.addNew(fakeNode, hoverPath);
-            paths.addPoints($selectedPath, fakeNode);
 
             const pathIndex = starts ? paths.addNew() : $selectedPath;
+            paths.addPoints(pathIndex, fakeNode);
             nodes.addPaths(nodeIndex, {index: pathIndex, start: starts });
             
             if(!starts) paths.addNew();
