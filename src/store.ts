@@ -67,7 +67,7 @@ function createPaths() {
                 return old;
             })
             const newIndex =  this.add({ type: get(type), points: splitPoints[0]});
-            nodes.changePathIndex({ index, start: true}, newIndex);
+            nodes.changePathIndex(index, newIndex, true);
             return newIndex;
         },
         reset: () => set([])
@@ -109,14 +109,15 @@ function createNodes() {
                 return old;
             })
         },
-        changePathIndex: function (targetPathNode: PathNode, newIndex: number) {
+        changePathIndex: function (targetIndex: number, newIndex: number, isStart: boolean = false, isEnd: boolean = false) {
             update(old => {
                 return old.map( node => {
                     return {
                         ...node,
                         paths: node.paths.map( p => {
-                            return p.index == targetPathNode.index && p.start == targetPathNode.start ?
-                                { index: newIndex, start: p.start} :
+                            const isTarget = () => p.index == targetIndex && (isStart && p.start || isEnd && !p.start);
+                            return isTarget ?
+                                { ...p, index: newIndex} :
                                 p;
                         })
                     }
