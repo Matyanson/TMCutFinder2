@@ -5,14 +5,17 @@
         </marker>
         {#each $paths as path, i}
             <polyline 
-            class='path' class:selected={i == $selectedPath} points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={() => hoverPath = -1}
-            vector-effect="non-scaling-stroke" stroke-width='10px' fill='none' stroke={'#1b36ca'} marker-end='url(#arrow)'
+            class={`path ${path.type}`} class:selected={i == $selectedPath}  vector-effect="non-scaling-stroke"
+            points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={() => hoverPath = -1}
             />
         {/each}
     </svg>
     <svg class="top">
         {#each $nodes as node, i}
-            <circle cx={`${node.coords.x / aspect_ratio}%`} cy={`${node.coords.y}%`} on:mouseenter={() => hoverNode = i} on:mouseleave={() => hoverNode = -1} r={10} fill={'white'} />
+            <circle
+            class={`node ${node.type}`} class:selected={i == $selectedNode} r={10}
+            cx={`${node.coords.x / aspect_ratio}%`} cy={`${node.coords.y}%`} on:mouseenter={() => hoverNode = i} on:mouseleave={() => hoverNode = -1}
+            />
         {/each}
         {#if hoverPath > -1}
         <circle class="transparent" cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} fill={'white'} />
@@ -184,7 +187,7 @@ import { getContext, onMount } from "svelte";
     .canvas{
         position: relative;
         height: 100%;
-        background-color: aqua;
+        background-color: #fff;
     }
     svg {
         user-select: none;
@@ -195,6 +198,7 @@ import { getContext, onMount } from "svelte";
         width: 100%; 
         height: 100%;
         overflow: visible;
+        z-index: 1;
     }
     svg * {
         pointer-events: auto;
@@ -204,17 +208,38 @@ import { getContext, onMount } from "svelte";
         height: 100%;
         user-select: none;
         -webkit-user-drag: none;
+        filter: opacity(0.85);
     }
     svg polyline {
         fill: none;
+        stroke-width: 10px;
+        stroke: #1b36ca;
         stroke-linecap: round;
         stroke-linejoin: round;
         transition: 0.2s;
     }
-    svg polyline.selected{
+    svg polyline.oneway {
+        stroke-width: 5px;
+        stroke: #000;
+        marker-end: url(#arrow);
+    }
+    svg circle {
+        stroke-width: 3px;
+        fill: #fff;
+        transition: 0.2s;
+    }
+    svg circle.cp {
+        fill: #ffff00;
+    }
+    svg circle.ring {
+        fill: #ffffffab;
+        stroke: #ffff00;
+        stroke-width: 6px;
+    }
+    svg polyline.selected, circle.selected{
         stroke: #6c82ff;
     }
-    svg *:hover {
+    svg polyline:hover, circle:hover {
         stroke: #14258a;
     }
     .transparent{

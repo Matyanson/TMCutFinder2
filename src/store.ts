@@ -56,6 +56,9 @@ function createPaths() {
                 return old;
             })
         },
+        delete: function (index: number) {
+            
+        },
         split: function (index: number, pointIndex: number): number {
             const chosenPath = get(paths)[index];
             const splitPoints = [chosenPath.points.slice(0, pointIndex + 1), chosenPath.points.slice(pointIndex)];
