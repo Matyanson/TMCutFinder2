@@ -237,10 +237,10 @@ import { getContext, onMount } from "svelte";
         stroke-width: 6px;
     }
     svg polyline.selected, circle.selected{
-        stroke: #6c82ff;
+        stroke: #6c82ff!important;
     }
     svg polyline:hover, circle:hover {
-        stroke: #14258a;
+        stroke: #14258a!important;
     }
     .transparent{
         opacity: 0.7;
