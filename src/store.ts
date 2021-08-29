@@ -57,7 +57,10 @@ function createPaths() {
             })
         },
         delete: function (index: number) {
-            
+            if(get(paths)[index] == undefined) return;
+            update(old => [...old.slice(0, index), ...old.slice(index + 1)])    //delete 1 path from array
+            nodes.deletePathNodes(index);
+            nodes.shiftPathIndex(index + 1, -1);
         },
         split: function (index: number, pointIndex: number): number {
             const chosenPath = get(paths)[index];
@@ -107,6 +110,26 @@ function createNodes() {
             update(old => {
                 old[index].paths = [...old[index].paths, ...[].concat(paths)];
                 return old;
+            })
+        },
+        deletePathNodes: function (pathIndex: number) {
+            update(old => {
+                const n = old.map(n => {
+                    return {
+                        ...n,
+                        paths: n.paths.filter(p => p.index != pathIndex)
+                    }
+                })
+                return n.filter(node => node.paths.length > 0);
+            })
+        },
+        shiftPathIndex: function (from: number, increment: number) {
+            update(old => {
+                return old.map(n => {
+                    return {...n, paths: n.paths.map(p => {
+                        return p.index >= from ? {...p, index: p.index + increment} : p;
+                    })}
+                })
             })
         },
         changePathIndex: function (targetIndex: number, newIndex: number, isStart: boolean = false, isEnd: boolean = false) {

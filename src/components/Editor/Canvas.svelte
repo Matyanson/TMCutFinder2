@@ -25,7 +25,7 @@
     </svg>
     <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
 </div>
-<svelte:window on:wheel={()=>handleResize()} />
+<svelte:window on:wheel={handleResize} on:keyup={handleKeyUp} />
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
@@ -137,6 +137,15 @@ import { getContext, onMount } from "svelte";
             
         }
     }
+    const handleKeyUp = (e: KeyboardEvent) => {
+        switch(e.key){
+            case 'Delete':
+                if($selectedPath > -1)
+                    paths.delete($selectedPath);
+                break;
+        }
+    }
+
     const handleResize = () => {
         const svgRect = svg.getBoundingClientRect();
         aspect_ratio =  svgRect.width / svgRect.height;
