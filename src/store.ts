@@ -50,9 +50,9 @@ function createPaths() {
                 return old;
             })
         },
-        edit: function (index: number, path: Path) {
+        edit: function (index: number, newPath: Path) {
             update(old => {
-                old[index] = path;
+                old[index] = newPath;
                 return old;
             })
         },
@@ -109,6 +109,12 @@ function createNodes() {
         addPaths: function (index: number, paths: PathNode | PathNode[]) {
             update(old => {
                 old[index].paths = [...old[index].paths, ...[].concat(paths)];
+                return old;
+            })
+        },
+        edit: function (index: number, newNode: INode) {
+            update(old => {
+                old[index] = newNode;
                 return old;
             })
         },

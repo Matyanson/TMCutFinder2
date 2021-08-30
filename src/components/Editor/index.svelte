@@ -3,6 +3,9 @@
         <Toolbar />
     </div>
     <div class="canvas">
+        <div class="toolMenu">
+            <ItemMenu />
+        </div>
         <CanvasTransformer>
             <Canvas />
         </CanvasTransformer>
@@ -11,6 +14,7 @@
 <script lang="ts">
 import Canvas from "./Canvas.svelte";
 import CanvasTransformer from "./DisplayTransformer.svelte";
+import ItemMenu from "./ItemMenu.svelte";
 import Toolbar from "./Toolbar.svelte";
 </script>
 
@@ -26,5 +30,12 @@ import Toolbar from "./Toolbar.svelte";
     }
     .canvas{
         flex: 1;
+        position: relative;
+    }
+    .toolMenu{
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 5;
     }
 </style>

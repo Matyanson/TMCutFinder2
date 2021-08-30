@@ -18,7 +18,7 @@
             />
         {/each}
         {#each cps as cp, i}
-            <text class="transparent" x={`${cp.coords.x / aspect_ratio}%`} y={`${cp.coords.y}%`} text-anchor="middle" alignment-baseline="middle" stroke="#777">{i}</text>
+            <text class="transparent" x={`${cp.coords.x / aspect_ratio}%`} y={`${cp.coords.y}%`} text-anchor="middle" alignment-baseline="middle" stroke="#000">{i}</text>
         {/each}
         {#if hoverPath > -1}
         <circle class={`transparent ${$toolIndex == 2 ? $nodeType : ''}`} cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} />
