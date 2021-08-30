@@ -99,11 +99,11 @@ import { getContext, onMount } from "svelte";
                 if(hoverNode > -1){
                     paths.addPoints($selectedPath, $nodes[hoverNode].coords);
                     nodes.addPaths(hoverNode, {index: $selectedPath, start: starts });
+                    if(!starts) paths.addNew();
                 } else if(hoverPath > -1) {
                     connectPaths(starts);
+                    if(!starts) paths.addNew();
                 }
-                    
-                if(!starts) paths.addNew();
                 break;
             case 2:
                 if(hoverPath > -1){
