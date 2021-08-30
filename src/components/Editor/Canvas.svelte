@@ -17,8 +17,11 @@
             cx={`${node.coords.x / aspect_ratio}%`} cy={`${node.coords.y}%`} on:mouseenter={() => hoverNode = i} on:mouseleave={() => hoverNode = -1}
             />
         {/each}
+        {#each cps as cp, i}
+            <text class="transparent" x={`${cp.coords.x / aspect_ratio}%`} y={`${cp.coords.y}%`} text-anchor="middle" alignment-baseline="middle" stroke="#777">{i}</text>
+        {/each}
         {#if hoverPath > -1}
-        <circle class="transparent" cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} fill={'white'} />
+        <circle class={`transparent ${$toolIndex == 2 ? $nodeType : ''}`} cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} />
         {/if}
         <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)}:${Math.floor(m.y)}`}</text>
         <text x={'0%'} y={'95%'} fill={'white'}>{`${hoverPath} ${hoverNode}`}</text>
@@ -29,7 +32,8 @@
 
 <script lang="ts">
 import type Coords from "src/models/Coords";
-import { nodes, paths, selectedNode, selectedPath, toolIndex } from "src/store";
+import type { INode } from "src/models/Node";
+import { nodes, nodeType, paths, selectedNode, selectedPath, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
 import { getDist, nearestIndex } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
@@ -53,6 +57,9 @@ import { getContext, onMount } from "svelte";
     let hoverNode = -1;
     let lastPoint: Coords = {x: 0, y: 0};
     let fakeNode: Coords = {x: 0, y: 0};
+
+    let cps: INode[];
+    $: cps = $nodes.filter(n => n.type == 'cp' || n.type == 'ring');
 
     const observer = sizeTracker();
 
@@ -86,7 +93,6 @@ import { getContext, onMount } from "svelte";
             case 1:
                 if(!$paths[$selectedPath]){
                     paths.addNew();
-                    console.log('path was not selected, adding new');
                 }
                 const starts = $paths[$selectedPath].points.length < 1;
                 
@@ -192,7 +198,7 @@ import { getContext, onMount } from "svelte";
     }
 
     const connectPaths = (starts: boolean) => {
-        const nodeIndex = nodes.addNew(fakeNode, hoverPath);
+        const nodeIndex = nodes.addNew(fakeNode, hoverPath, 'normal');
         const pathIndex = starts ? paths.addNew() : $selectedPath;
 
         paths.addPoints(pathIndex, fakeNode);

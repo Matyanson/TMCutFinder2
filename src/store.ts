@@ -93,13 +93,13 @@ function createNodes() {
             })
             return get(nodes).length -1;
         },
-        addNew: function (coords: Coords, pathIndex: number) {
+        addNew: function (coords: Coords, pathIndex: number, nodeType: INode['type'] = get(type)) {
             const pointIndex = get(paths)[pathIndex].points.findIndex(p => p == coords);
             if(pointIndex < 0) return -1;
             const newPathIndex = paths.split(pathIndex, pointIndex);
             return this.add({
                 coords,
-                type: get(type),
+                type: nodeType,
                 paths: [
                     { index: pathIndex, start: true },
                     { index: newPathIndex, start: false }
