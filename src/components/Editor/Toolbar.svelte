@@ -17,11 +17,12 @@
         <KeyBtn key='d' on={$nodeType == 'ring'} onPress={() => $nodeType = 'ring'}>RingCP</KeyBtn>
     {/if}
     </div>
+    <button class="exit" on:click={() => imgSrc.set('')}>X</button>
 </div>
 <svelte:window on:keydown={onKeyDown} />
 
 <script lang="ts">
-    import { nodes, nodeType, paths, pathType, selectedNode, selectedPath, toolIndex } from 'src/store'
+    import { imgSrc, nodes, nodeType, paths, pathType, selectedNode, selectedPath, toolIndex } from 'src/store'
 import KeyBtn from '../KeyBtn.svelte';
     let lastTool = 0;
     
@@ -52,5 +53,10 @@ import KeyBtn from '../KeyBtn.svelte';
     }
     .tools{
         margin-right: 50px;
+    }
+    .exit{
+        margin-left: auto;
+        background: #f03b3b;
+        color: whitesmoke;
     }
 </style>
