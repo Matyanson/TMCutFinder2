@@ -3,12 +3,13 @@ import Editor from "src/components/Editor/index.svelte";
     export const prerender = true;
 </script>
 <script lang="ts">
-import FilePickerUrl from "src/components/FilePickerUrl.svelte";
+import FilePickerUrl from "src/components/filePickerUrl.svelte";
+import ScreenshotSaver from "src/components/ScreenshotSaver.svelte";
 import { imgSrc } from "src/store";
 
-let fileUrl;
-
-$: if(typeof(fileUrl) == 'string') imgSrc.set(fileUrl);
+const handleUrlChange = (url: string) => {
+    imgSrc.set(url);
+}
 
 </script>
 <svelte:head>
@@ -17,7 +18,9 @@ $: if(typeof(fileUrl) == 'string') imgSrc.set(fileUrl);
 </svelte:head>
 
 {#if $imgSrc == undefined || $imgSrc == ""}
-<FilePickerUrl bind:url={fileUrl}/>
+<FilePickerUrl onChange={handleUrlChange}/>
+<ScreenshotSaver onChange={handleUrlChange}/>
+<h2>Or paste a screenshot from clipboard!</h2>
 {:else}
 <div class="box">
     <Editor />

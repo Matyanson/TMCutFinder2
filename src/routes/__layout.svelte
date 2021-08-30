@@ -25,6 +25,6 @@
         display: flex;
         flex-flow: column;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
     }
 </style>
