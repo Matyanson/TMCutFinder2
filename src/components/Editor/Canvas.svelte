@@ -84,7 +84,20 @@ import { getContext, onMount } from "svelte";
                 $selectedNode = hoverNode > -1 ? hoverNode : -1;
                 break;
             case 1:
-                connectPath();
+                if(!$paths[$selectedPath]){
+                    paths.addNew();
+                    console.log('path was not selected, adding new');
+                }
+                const starts = $paths[$selectedPath].points.length < 1;
+                
+                if(hoverNode > -1){
+                    paths.addPoints($selectedPath, $nodes[hoverNode].coords);
+                    nodes.addPaths(hoverNode, {index: $selectedPath, start: starts });
+                } else if(hoverPath > -1) {
+                    connectPaths(starts);
+                }
+                    
+                if(!starts) paths.addNew();
                 break;
             case 2:
                 if(hoverPath > -1){
@@ -178,17 +191,12 @@ import { getContext, onMount } from "svelte";
         return path;
     }
 
-    const connectPath = () => {
-        if(hoverPath > -1){
-            const starts = $paths[$selectedPath].points.length < 1;
-            const nodeIndex = nodes.addNew(fakeNode, hoverPath);
+    const connectPaths = (starts: boolean) => {
+        const nodeIndex = nodes.addNew(fakeNode, hoverPath);
+        const pathIndex = starts ? paths.addNew() : $selectedPath;
 
-            const pathIndex = starts ? paths.addNew() : $selectedPath;
-            paths.addPoints(pathIndex, fakeNode);
-            nodes.addPaths(nodeIndex, {index: pathIndex, start: starts });
-            
-            if(!starts) paths.addNew();
-        }
+        paths.addPoints(pathIndex, fakeNode);
+        nodes.addPaths(nodeIndex, {index: pathIndex, start: starts });
     }
 </script>
 
