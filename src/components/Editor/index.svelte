@@ -7,11 +7,12 @@
             <ItemMenu />
         </div>
         <CanvasTransformer>
-            <Canvas />
+            <Canvas img={$imgSrc} />
         </CanvasTransformer>
     </div>
 </div>
 <script lang="ts">
+import { imgSrc } from "src/store";
 import Canvas from "./Canvas.svelte";
 import CanvasTransformer from "./DisplayTransformer.svelte";
 import ItemMenu from "./ItemMenu.svelte";

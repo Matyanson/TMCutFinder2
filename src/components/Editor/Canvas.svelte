@@ -26,7 +26,7 @@
         <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)}:${Math.floor(m.y)}`}</text>
         <text x={'0%'} y={'95%'} fill={'white'}>{`${hoverPath} ${hoverNode}`}</text>
     </svg>
-    <img alt="screenshot of map" src="https://i.imgur.com/31jOVzP.jpeg"/>
+    <img alt="screenshot of map" src={img}/>
 </div>
 <svelte:window on:wheel={handleResize} on:keyup={handleKeyUp} />
 
@@ -39,6 +39,8 @@ import { getDist, nearestIndex } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
 
     const context: any = getContext('canvas');
+
+    export let img: string = '';
 
     //svg
     let svg: Element;
