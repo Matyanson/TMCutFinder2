@@ -2,7 +2,7 @@
 import FilePicker from "./FilePicker.svelte";
 
     export let accept = 'image/*';
-    export let text = 'Drag and Drop file here';
+    export let text: string = undefined;
     export let onChange: (res: string) => void;
 
     function saveUrl(event: Event){
@@ -16,4 +16,4 @@ import FilePicker from "./FilePicker.svelte";
     }
 </script>
 
-<FilePicker text={text} accept={accept} onChange={saveUrl} />
+<FilePicker bind:text accept={accept} onChange={saveUrl} />
