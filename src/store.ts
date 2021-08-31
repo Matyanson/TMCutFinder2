@@ -25,6 +25,7 @@ function createPaths() {
 
     return {
         subscribe,
+        set,
         selected,
         type,
         add: function (newPath: Path = {type: get(type), points: []}): number {
@@ -85,6 +86,7 @@ function createNodes() {
 
     return {
         subscribe,
+        set,
         selected,
         type,
         add: function (newNode: INode): number {

@@ -17,14 +17,22 @@
         <KeyBtn key='d' on={$nodeType == 'ring'} onPress={() => $nodeType = 'ring'}>RingCP</KeyBtn>
     {/if}
     </div>
+    <button on:click={() => saveMap('map', $imgSrc, $paths, $nodes)}>saveMap</button>
+    <input type="file" accept='.dat' on:change={handleFileChange} />
     <button class="exit" on:click={() => imgSrc.set('')}>X</button>
 </div>
 <svelte:window on:keydown={onKeyDown} />
 
 <script lang="ts">
-    import { imgSrc, nodes, nodeType, paths, pathType, selectedNode, selectedPath, toolIndex } from 'src/store'
+import { imgSrc, nodes, nodeType, paths, pathType, selectedNode, selectedPath, toolIndex } from 'src/store'
 import KeyBtn from '../KeyBtn.svelte';
+import { loadMap, saveMap } from './map';
     let lastTool = 0;
+
+    const handleFileChange = (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        loadMap(target.files[0]);
+    }
     
     const switchCamera = (active: boolean) => {
         if(active){
