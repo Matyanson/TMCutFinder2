@@ -1,4 +1,7 @@
-<button class:isOn={isOn || on} on:click={() => handleSwitch(true)}>
+<button class:isOn={isOn || on} on:click={() => {
+    handleSwitch(true);
+    onPress();
+}}>
     <slot/>
 </button>
 {#if keyLabel}
