@@ -23,6 +23,7 @@
         {#if hoverPath > -1}
         <circle class={`transparent ${$toolIndex == 2 ? $nodeType : ''}`} cx={`${fakeNode.x / aspect_ratio}%`} cy={`${fakeNode.y}%`} r={10} />
         {/if}
+        <text x={'0%'} y={'90%'} fill={'white'}>{`${aspect_ratio}`}</text>
         <text x={'0%'} y={'100%'} fill={'white'}>{`${Math.floor(m.x)}:${Math.floor(m.y)}`}</text>
         <text x={'0%'} y={'95%'} fill={'white'}>{`${hoverPath} ${hoverNode}`}</text>
     </svg>
@@ -170,6 +171,7 @@ import { getContext, onMount } from "svelte";
     const handleResize = () => {
         const svgRect = svg.getBoundingClientRect();
         aspect_ratio =  svgRect.width / svgRect.height;
+        console.log(aspect_ratio);
         unit = svg.clientHeight / 100;
     }
 

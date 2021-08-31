@@ -69,5 +69,7 @@ export const stringToBuffer = (s: string) => {
 }
 
 export const bufferToString = (buffer: Uint8Array): string => {
-    return String.fromCharCode(...Array.from(buffer));
+    let res = '';
+    buffer.forEach(n => res += String.fromCharCode(n));
+    return res;
 }
