@@ -2,10 +2,10 @@ import { get, writable } from "svelte/store";
 import type Coords from "./models/Coords";
 import type { INode, PathNode } from "./models/Node";
 import type { Path } from "./models/Path";
-import { wStorage } from "./utils/writableStores";
+import { iStorage, wStorage } from "./utils/writableStores";
 
 
-export const imgSrc = wStorage('img', '');
+export const imgSrc = iStorage('img', '');
 export const toolIndex = writable(0);
 
 export const paths = createPaths();
