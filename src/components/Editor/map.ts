@@ -1,7 +1,7 @@
 import type { INode } from "src/models/Node";
 import type { Path } from "src/models/Path";
 import { imgSrc, nodes, paths } from "src/store";
-import { base64ToUri, bufferToString, dataUriToBuffer, mergeBuffers, objectToBuffer, splitBuffer } from "src/utils/binaryData";
+import { base64ToUri, bufferToString, dataUriToBuffer, mergeBuffers, objectToBuffer, splitBuffer } from "src/utils/binary-data";
 import { saveFile } from "src/utils/files";
 
 export const saveMap = (name: string, imgUrl: string, paths: Path[], nodes: INode[]) => {
