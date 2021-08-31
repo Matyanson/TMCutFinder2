@@ -15,6 +15,8 @@
         <KeyBtn key='a' on={$nodeType == 'normal'} onPress={() => $nodeType = 'normal'}>Normal</KeyBtn>
         <KeyBtn key='s' on={$nodeType == 'cp'} onPress={() => $nodeType = 'cp'}>CP</KeyBtn>
         <KeyBtn key='d' on={$nodeType == 'ring'} onPress={() => $nodeType = 'ring'}>RingCP</KeyBtn>
+        <KeyBtn on={$nodeType == 'start'} onPress={() => $nodeType = 'start'}>Start</KeyBtn>
+        <KeyBtn on={$nodeType == 'finish'} onPress={() => $nodeType = 'finish'}>Finish</KeyBtn>
     {/if}
     </div>
     <button on:click={() => saveMap('map', $imgSrc, $paths, $nodes)}>saveMap</button>

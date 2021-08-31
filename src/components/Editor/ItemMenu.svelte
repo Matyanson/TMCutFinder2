@@ -25,7 +25,7 @@ import { nodes, nodeType, paths, pathType, selectedNode, selectedPath } from "sr
 import type { INode } from "src/models/Node";
 import type { Path } from "src/models/Path";
 
-const nodeTypes: INode["type"][] = ['normal', 'cp', 'ring'];
+const nodeTypes: INode["type"][] = ['normal', 'cp', 'ring', 'start', 'finish'];
 const pathTypes: Path["type"][] = ['normal', 'oneway'];
 
 </script>

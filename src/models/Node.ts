@@ -7,6 +7,6 @@ export interface PathNode {
 
 export interface INode {
     coords: Coords,
-    type?: 'cp' | 'ring' | 'normal',
+    type?: 'cp' | 'ring' | 'normal' | 'start' | 'finish',
     paths: PathNode[]
 }

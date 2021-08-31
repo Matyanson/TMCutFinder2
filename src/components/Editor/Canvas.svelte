@@ -264,6 +264,12 @@ import { getContext, onMount } from "svelte";
         stroke: #ffff00;
         stroke-width: 6px;
     }
+    svg circle.start{
+        fill: #00ff00;
+    }
+    svg circle.finish{
+        fill: #ff0000;
+    }
     svg polyline:hover, circle:hover {
         stroke: #14258a!important;
     }
