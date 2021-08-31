@@ -2,13 +2,19 @@
     export let accept = '';
     export let multiple = false;
     export let text = 'Drag and Drop file here';
-    export let onChange: (e: Event) => void = () => {};
+    export let onChange: (file: File) => void = () => {};
     let draging = false;
+
+    const handleFileChange = (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        const file = target.files[0];
+        onChange(file);
+    }
 </script>
 
 <span class={`dragBox ${draging? "draging": ""}`} >
     {text}
-    <input type="file" accept={accept} multiple={multiple} on:dragstart={()=>{draging = true}} on:dragleave={()=>{draging = false}} on:change={onChange} />
+    <input type="file" accept={accept} multiple={multiple} on:dragstart={()=>{draging = true}} on:dragleave={()=>{draging = false}} on:change={handleFileChange} />
 </span>
 
 <style>

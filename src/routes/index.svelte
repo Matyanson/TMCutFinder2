@@ -1,14 +1,29 @@
 <script context="module">
 import Editor from "src/components/Editor/index.svelte";
+import { loadMap } from "src/components/Editor/map";
+import FilePicker from "src/components/FilePicker.svelte";
     export const prerender = true;
 </script>
 <script lang="ts">
-import FilePickerUrl from "src/components/filePickerUrl.svelte";
 import ScreenshotSaver from "src/components/ScreenshotSaver.svelte";
 import { imgSrc } from "src/store";
 
-const handleUrlChange = (url: string) => {
-    imgSrc.set(url);
+const handleFileChange = (file: File) => {
+    let reader = new FileReader();
+    const nameSplit = file.name.split('.');
+
+    if(file.type.match('image*')){
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            if(typeof reader.result == 'string')
+                handleUrlChange(reader.result);
+        }
+    } else if(nameSplit[nameSplit.length - 1] == 'dat'){
+        loadMap(file);
+    }
+}
+const handleUrlChange = (newUrl) => {
+    $imgSrc = newUrl;
 }
 
 </script>
@@ -18,7 +33,7 @@ const handleUrlChange = (url: string) => {
 </svelte:head>
 
 {#if $imgSrc == undefined || $imgSrc == ""}
-<FilePickerUrl onChange={handleUrlChange}/>
+<FilePicker onChange={handleFileChange}/>
 <ScreenshotSaver onChange={handleUrlChange}/>
 <h2>Or paste a screenshot from clipboard!</h2>
 {:else}
