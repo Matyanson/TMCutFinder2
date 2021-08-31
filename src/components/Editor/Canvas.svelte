@@ -6,7 +6,7 @@
         {#each $paths as path, i}
             <polyline 
             class={`path ${path.type}`} class:selected={i == $selectedPath}  vector-effect="non-scaling-stroke"
-            points={pointsToPath(path.points)} on:mouseenter={() => hoverPath = i} on:mouseleave={() => hoverPath = -1}
+            points={pointsToPath(path.points, aspect_ratio)} on:mouseenter={() => hoverPath = i} on:mouseleave={() => hoverPath = -1}
             />
         {/each}
     </svg>
@@ -169,9 +169,10 @@ import { getContext, onMount } from "svelte";
     }
 
     const handleResize = () => {
+        if(!svg) return;
         const svgRect = svg.getBoundingClientRect();
+        if(svgRect.width < 1 || svgRect.height < 1) return;
         aspect_ratio =  svgRect.width / svgRect.height;
-        console.log(aspect_ratio);
         unit = svg.clientHeight / 100;
     }
 
@@ -192,11 +193,11 @@ import { getContext, onMount } from "svelte";
         }
     }
 
-    const pointsToPath = (points: Coords[]) => {
+    const pointsToPath = (points: Coords[], ratio: number) => {
         let path = "";
         let pointsCopy = [...points];
         for(let p of pointsCopy){
-            path += ` ${p.x / aspect_ratio},${p.y}`;
+            path += ` ${p.x / ratio},${p.y}`;
         }
         return path;
     }

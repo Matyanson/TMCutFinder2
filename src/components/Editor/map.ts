@@ -36,7 +36,6 @@ export const loadMap = (blob: Blob) => {
         imgSrc.set(base64ToUri(img64, JSON.parse(mimeTypeStr)));
         paths.set(data['paths']);
         nodes.set(data['nodes']);
-        console.log(data);
     }
     reader.readAsArrayBuffer(blob);
 }
