@@ -71,7 +71,7 @@ function createPaths() {
                 old[index].points = splitPoints[1];
                 return old;
             })
-            const newIndex =  this.add({ type: get(type), points: splitPoints[0]});
+            const newIndex =  this.add({ type: chosenPath.type, points: splitPoints[0]});
             nodes.changePathIndex(index, newIndex, true);
             return newIndex;
         },
