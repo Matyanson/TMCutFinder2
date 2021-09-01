@@ -4,14 +4,17 @@
 export const mergeBuffers = (...buffers: Uint8Array[]) => {
     //https://stackoverflow.com/questions/38961399/javascript-download-multiple-files-and-concatenate-into-a-single-file
     const lengths = buffers.map(b => b.byteLength);
+    const bufferCount = buffers.length;
     const totalLength = lengths.reduce((total, curr) => total + curr);
-    const reservedBytesForLengths = lengths.length * 4;         //numbers are saved in 32bit, 32 / 8 = 4bytes. each number occupies 4 8bit bytes.
-    const res = new ArrayBuffer(reservedBytesForLengths + totalLength);
-    const uint32View = new Uint32Array(res, 0, lengths.length);          //maximum of 4.2bg can be strored per buffer
+    const metaDataBytes = 4 + bufferCount * 4;                      //numbers are saved in 32bit, 32 / 8 = 4bytes. each number occupies 4 8bit bytes.
+    
+    const res = new ArrayBuffer(metaDataBytes + totalLength);
+    const uint32View = new Uint32Array(res, 0, 1 + bufferCount);    //maximum of 4.2gb can be strored per buffer (if stored in Uint32 )
     const uint8View = new Uint8Array(res);
 
-    uint32View.set(lengths, 0);
-    let lastDataEnd = reservedBytesForLengths;
+    uint32View.set([bufferCount], 0);
+    uint32View.set(lengths, 1);
+    let lastDataEnd = metaDataBytes;
     for(let i = 0; i < buffers.length; i++) {
         uint8View.set(buffers[i], lastDataEnd);
         lastDataEnd += lengths[i];
@@ -19,10 +22,11 @@ export const mergeBuffers = (...buffers: Uint8Array[]) => {
     return res;
 }
 
-export const splitBuffer = (buffer: ArrayBuffer, bufferCount: number) => {
-    const uint8View = new Uint8Array(buffer, bufferCount * 4);       //32bit => 8bit == *4
-    const uint32View = new Uint32Array(buffer, 0, bufferCount);      //3 numbers stored in 3 bytes (32bit)
-    const lengths = Array.from(uint32View);
+export const splitBuffer = (buffer: ArrayBuffer) => {
+    const uint32View = new Uint32Array(buffer, 0, buffer.byteLength / 4);   // 8bit => 32bit = 32/8 = 4;
+    const itemCount = Array.from(uint32View.subarray(0, 1))[0];
+    const lengths = Array.from(uint32View.subarray(1, 1 + itemCount));
+    const uint8View = new Uint8Array(buffer, 4 + itemCount * 4);         // offset by metadata length
     
     const buffers: Uint8Array[] = [];
     [0, ...lengths].reduce((total, cur) => {

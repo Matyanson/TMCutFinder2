@@ -22,11 +22,11 @@ export const saveMap = (name: string, imgUrl: string, paths: Path[], nodes: INod
     saveFile(`${name}.dat`, [singleBuffer], 'application/dat');
 }
 
-export const loadMap = (blob: Blob) => {
+export const loadMap = (blob: Blob | File) => {
     let reader = new FileReader();
     reader.onload = () => {
         if(typeof(reader.result) === 'string') return;
-        const buffers = splitBuffer(reader.result, 3);
+        const buffers = splitBuffer(reader.result);
 
         const objStrings = buffers.map(b => bufferToString(b));
         const [mimeTypeStr, imgRaw, dataStr] = objStrings;

@@ -25,7 +25,8 @@ const handleFileChange = (file: File) => {
 const handleUrlChange = (newUrl) => {
     $imgSrc = newUrl;
 }
-
+const test = () => {
+}
 </script>
 <svelte:head>
 	<title>Home</title>
@@ -36,6 +37,7 @@ const handleUrlChange = (newUrl) => {
 <FilePicker onChange={handleFileChange}/>
 <ScreenshotSaver onChange={handleUrlChange}/>
 <h2>Or paste a screenshot from clipboard!</h2>
+<button on:click={test}>test</button>
 {:else}
 <div class="box">
     <Editor />
