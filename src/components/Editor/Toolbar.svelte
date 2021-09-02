@@ -12,29 +12,20 @@
         <KeyBtn key='s' on={$pathType == 'normal'} onPress={() => $pathType = 'normal'}>Normal</KeyBtn>
         <KeyBtn key='d' on={$pathType == 'oneway'} onPress={() => $pathType = 'oneway'}>1Way</KeyBtn>
     {:else if $toolIndex == 2}
-        <KeyBtn key='a' on={$nodeType == 'normal'} onPress={() => $nodeType = 'normal'}>Normal</KeyBtn>
+        <KeyBtn key='a' on={$nodeType == 'start'} onPress={() => $nodeType = 'start'}>Start</KeyBtn>
         <KeyBtn key='s' on={$nodeType == 'cp'} onPress={() => $nodeType = 'cp'}>CP</KeyBtn>
         <KeyBtn key='d' on={$nodeType == 'ring'} onPress={() => $nodeType = 'ring'}>RingCP</KeyBtn>
-        <KeyBtn on={$nodeType == 'start'} onPress={() => $nodeType = 'start'}>Start</KeyBtn>
-        <KeyBtn on={$nodeType == 'finish'} onPress={() => $nodeType = 'finish'}>Finish</KeyBtn>
+        <KeyBtn key='f' on={$nodeType == 'finish'} onPress={() => $nodeType = 'finish'}>Finish</KeyBtn>
+        <KeyBtn key='g' on={$nodeType == 'normal'} onPress={() => $nodeType = 'normal'}>Normal</KeyBtn>
     {/if}
     </div>
-    <button on:click={() => saveMap('map', $imgSrc, $paths, $nodes)}>saveMap</button>
-    <input type="file" accept='.dat' on:change={handleFileChange} />
-    <button class="exit" on:click={() => imgSrc.set('')}>X</button>
 </div>
 <svelte:window on:keydown={onKeyDown} />
 
 <script lang="ts">
-import { imgSrc, nodes, nodeType, paths, pathType, selectedNode, selectedPath, toolIndex } from 'src/store'
+import {  nodes, nodeType, paths, pathType, selectedNode, selectedPath, toolIndex } from 'src/store'
 import KeyBtn from '../KeyBtn.svelte';
-import { loadMap, saveMap } from './map';
     let lastTool = 0;
-
-    const handleFileChange = (e: Event) => {
-        const target = e.target as HTMLInputElement;
-        loadMap(target.files[0]);
-    }
     
     const switchCamera = (active: boolean) => {
         if(active){
@@ -47,7 +38,7 @@ import { loadMap, saveMap } from './map';
 
     const onKeyDown = (e: KeyboardEvent) => {
         switch(e.key){
-            case 'f':
+            case 'k':
                 paths.reset();
                 nodes.reset();
                 break;
@@ -63,10 +54,5 @@ import { loadMap, saveMap } from './map';
     }
     .tools{
         margin-right: 50px;
-    }
-    .exit{
-        margin-left: auto;
-        background: #f03b3b;
-        color: whitesmoke;
     }
 </style>

@@ -1,9 +1,13 @@
 <div class="editor">
-    {#if edit}
-    <div class="tools">
-        <button on:click={() => edit = false}>Routes</button>
-        <Toolbar />
+    <div class="titleBar">
+        <span>{edit ? 'Editor' : 'Generator'}</span>
+        <button on:click={() => edit = !edit}>Routes</button>
+        <button on:click={() => saveMap('map', $imgSrc, $paths, $nodes)}>saveMap</button>
+        <input type="file" accept='.dat' on:change={handleFileChange} />
+        <button class="exit" on:click={() => imgSrc.set('')}>X</button>
     </div>
+    {#if edit}
+    <Toolbar />
     <div class="display">
         <div class="toolMenu">
             <ItemMenu />
@@ -13,23 +17,26 @@
         </DisplayTransformer>
     </div>
     {:else}
-    <div class="tools">
-        <button on:click={() => edit = true}>Edit</button>
-        <h2>Route tools</h2>
-    </div>
     <div class="display">
         <h2>Route view</h2>
     </div>
     {/if}
 </div>
 <script lang="ts">
-import { imgSrc } from "src/store";
+import { imgSrc, nodes, paths } from "src/store";
 import Canvas from "./Canvas.svelte";
 import DisplayTransformer from "./DisplayTransformer.svelte";
 import ItemMenu from "./ItemMenu.svelte";
+import { loadMap, saveMap } from "./map";
 import Toolbar from "./Toolbar.svelte";
 
 let edit: boolean = true;
+
+
+const handleFileChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    loadMap(target.files[0]);
+}
 </script>
 
 <style>
@@ -46,11 +53,16 @@ let edit: boolean = true;
         flex: 1;
         position: relative;
     }
-    .tools{
+    .titleBar{
         display: flex;
         flex-flow: row;
         align-items: center;
         background: #25898f;
+    }
+    .exit{
+        margin-left: auto;
+        background: #f03b3b;
+        color: whitesmoke;
     }
     .toolMenu{
         position: absolute;
