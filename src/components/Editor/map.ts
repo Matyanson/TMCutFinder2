@@ -16,8 +16,6 @@ export const saveMap = (name: string, imgUrl: string, paths: Path[], nodes: INod
         objectToBuffer(data)
     ]
     const singleBuffer = mergeBuffers(...buffers);
-    console.log(singleBuffer.byteLength);
-    console.log(mimeType);
     //save to file.
     saveFile(`${name}.dat`, [singleBuffer], 'application/dat');
 }
