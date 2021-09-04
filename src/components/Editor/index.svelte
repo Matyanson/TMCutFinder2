@@ -1,7 +1,7 @@
 <div class="editor">
     <div class="titleBar">
         <span>{edit ? 'Editor' : 'Generator'}</span>
-        <button on:click={() => edit = !edit}>Routes</button>
+        <button on:click={() => edit = !edit}>{edit ? 'Generator' : 'Editor'}</button>
         <button on:click={() => saveMap('map', $imgSrc, $paths, $nodes)}>saveMap</button>
         <input type="file" accept='.dat' on:change={handleFileChange} />
         <button class="exit" on:click={() => imgSrc.set('')}>X</button>
@@ -18,19 +18,20 @@
     </div>
     {:else}
     <div class="display">
-        <h2>Route view</h2>
+        <RouteViewer />
     </div>
     {/if}
 </div>
 <script lang="ts">
 import { imgSrc, nodes, paths } from "src/store";
 import Canvas from "./Canvas.svelte";
+import RouteViewer from "src/components/RouteViewer/index.svelte";
 import DisplayTransformer from "./DisplayTransformer.svelte";
 import ItemMenu from "./ItemMenu.svelte";
 import { loadMap, saveMap } from "./map";
 import Toolbar from "./Toolbar.svelte";
 
-let edit: boolean = true;
+let edit: boolean = false;
 
 
 const handleFileChange = (e: Event) => {
@@ -52,6 +53,7 @@ const handleFileChange = (e: Event) => {
     .display{
         flex: 1;
         position: relative;
+        overflow-y: auto;
     }
     .titleBar{
         display: flex;
