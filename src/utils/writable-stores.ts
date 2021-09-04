@@ -1,5 +1,6 @@
 import { writable, Writable } from "svelte/store";
-import {get, set} from "idb-keyval"
+import * as idb from "idb-keyval/dist/cjs";
+const { get, set } = idb;
 
 export const wStorage = <T>(key: string, initValue: T): Writable<T> => {
 	const store = writable(initValue);
