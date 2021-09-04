@@ -1,4 +1,3 @@
-import { worker } from "cluster";
 //handle different commands
 onmessage = async function(e){
     let d = e.data;
@@ -12,3 +11,4 @@ onmessage = async function(e){
         break;
     }
 }
+export {};

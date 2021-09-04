@@ -5,6 +5,7 @@
 
 <script lang="ts">
 import Settings from "./Settings.svelte";
+import myWorker from "../../web-worker?worker";
 
 let w: Worker;
 
@@ -12,7 +13,7 @@ const startWorker = () => {
     console.log("starting woker");
     if(typeof(Worker) == "undefined" || w) return;
 
-    w = new Worker(new URL('../../web-worker.ts', import.meta.url));
+    w = new myWorker();
     w.postMessage({
         type: 'hello',
         data: {
