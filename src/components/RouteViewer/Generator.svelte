@@ -1,13 +1,16 @@
 <div class="generator">
-    <Settings/>
+    <Settings bind:settings />
     <button on:click={startWorker}>Re-route</button>
 </div>
 
 <script lang="ts">
 import Settings from "./Settings.svelte";
 import myWorker from "../../web-worker?worker";
+import { nodes, paths } from "src/store";
+import type { GenerateSettings } from "src/models/GenerateSettings";
 
 let w: Worker;
+let settings: GenerateSettings;
 
 const startWorker = () => {
     console.log("starting woker");
@@ -15,8 +18,11 @@ const startWorker = () => {
 
     w = new myWorker();
     w.postMessage({
-        type: 'hello',
+        type: 'calculate',
         data: {
+            paths: $paths,
+            nodes: $nodes,
+            settings
         }
     });
     w.onmessage = onMessage;
@@ -29,6 +35,7 @@ const onMessage = (e) => {
             break;
 
         default:
+            console.log(mess.data);
             break;
     }
 }

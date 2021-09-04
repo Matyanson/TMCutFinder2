@@ -7,7 +7,9 @@
     </div>
 </div>
 <script lang="ts">
-    export let settings = {
+    import type { GenerateSettings } from "src/models/GenerateSettings";
+
+    export let settings: GenerateSettings = {
         limit: 10,
         maxRouteLength: 2
     }
