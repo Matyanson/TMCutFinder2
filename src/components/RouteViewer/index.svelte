@@ -1,7 +1,6 @@
 <div class="generator">
     <div class="settings">
-        <Settings />
-        <button>Re-route</button>
+        <Generator/>
         <KeyBtn key=' ' on={$toolIndex == 3} onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
     </div>
     <div class="display">
@@ -12,11 +11,11 @@
 </div>
 
 <script lang="ts">
-    import Settings from "./Settings.svelte";
     import Display from "./Display.svelte";
     import DisplayTransformer from "../Editor/DisplayTransformer.svelte";
     import { toolIndex } from "src/store";
     import KeyBtn from "src/components/KeyBtn.svelte";
+import Generator from "./Generator.svelte";
 
 const switchCamera = (active: boolean) => {
     if(active){
