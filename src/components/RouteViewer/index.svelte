@@ -1,11 +1,11 @@
 <div class="generator">
     <div class="settings">
-        <Generator/>
+        <Generator bind:route bind:percentage />
         <KeyBtn key=' ' on={$toolIndex == 3} onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
     </div>
     <div class="display">
         <DisplayTransformer>
-            <Display/>
+            <Display bind:route bind:percentage/>
         </DisplayTransformer>
     </div>
 </div>
@@ -15,7 +15,10 @@
     import DisplayTransformer from "../Editor/DisplayTransformer.svelte";
     import { toolIndex } from "src/store";
     import KeyBtn from "src/components/KeyBtn.svelte";
-import Generator from "./Generator.svelte";
+    import Generator from "./Generator.svelte";
+
+    let route = {dist:0, points: [], cps: []};
+    let percentage = 0;
 
 const switchCamera = (active: boolean) => {
     if(active){
