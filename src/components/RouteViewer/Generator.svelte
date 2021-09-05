@@ -14,7 +14,6 @@
         </div>
     {/each}
     </div>
-    <input type='range' min='0' max='10000' bind:value={percentage} style="width: 100%;" /> {percentage / 100}
 </div>
 
 <script lang="ts">
@@ -30,7 +29,6 @@ let settings: GenerateSettings;
 let routes: Route[] = [];
 let selected: number;
 
-export let percentage = 0;
 export let route: Route = null;
 $: route = routes[selected] ?? {dist:0, points:[], cps:[]};
 
