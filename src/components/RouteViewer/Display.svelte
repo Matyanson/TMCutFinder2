@@ -27,7 +27,7 @@ export let percentage = 0;
 let routePoints: Coords[];
 $: routePoints = mergePoints(route.points.slice(1)) ?? [];
 $: car = routePoints.length > 0 ?
-getPercentagePoint(percentage / 100, routePoints) :
+getPercentagePoint(percentage, routePoints) :
 {x:0,y:0};
 
 let svg: Element;
