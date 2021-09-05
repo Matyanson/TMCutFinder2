@@ -86,6 +86,7 @@ const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
     .container {
         position: relative;
         height: 100%;
+        background: #fff;
         -webkit-user-drag: none;
         user-select: none;
         pointer-events: none;
@@ -93,6 +94,7 @@ const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
     img{
         display: block;
         height: 100%;
+        opacity: 0.85;
     }
     svg{
         position: absolute;
