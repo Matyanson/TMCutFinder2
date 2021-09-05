@@ -36,7 +36,7 @@ import type Coords from "src/models/Coords";
 import type { INode } from "src/models/Node";
 import { nodes, nodeType, paths, selectedNode, selectedPath, toolIndex } from "src/store";
 import { sizeTracker } from "src/utils/dom";
-import { getDist, nearestIndex } from "src/utils/functions";
+import { getDist, nearestIndex, pointsToPath } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
 
     const context: any = getContext('canvas');
@@ -191,15 +191,6 @@ import { getContext, onMount } from "svelte";
             if(hoverPath == $selectedPath && currPath.points.length - nearestPointIndex < 5) return;
             fakeNode = currPath.points[nearestPointIndex] ?? {x: 0, y: 0};
         }
-    }
-
-    const pointsToPath = (points: Coords[], ratio: number) => {
-        let path = "";
-        let pointsCopy = [...points];
-        for(let p of pointsCopy){
-            path += ` ${p.x / ratio},${p.y}`;
-        }
-        return path;
     }
 
     const connectPaths = (starts: boolean) => {

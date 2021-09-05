@@ -24,3 +24,12 @@ export const nearestIndex = (pointA: Coords, points: Coords[]) => {
     }
     return res;
 }
+
+export const pointsToPath = (points: Coords[], ratio: number) => {
+    let path = "";
+    let pointsCopy = [...points];
+    for(let p of pointsCopy){
+        path += ` ${p.x / ratio},${p.y}`;
+    }
+    return path;
+}
