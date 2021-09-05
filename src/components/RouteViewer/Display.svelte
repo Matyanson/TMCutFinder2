@@ -30,8 +30,6 @@ $: car = routePoints.length > 0 ?
 getPercentagePoint(percentage / 100, routePoints) :
 {x:0,y:0};
 
-$: console.log(percentage);
-
 let svg: Element;
 let aspect_ratio = 16/9;
 
@@ -78,7 +76,7 @@ const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
     const point2 = coords[secondIndex];
     const percentageBetween = (dist - chosenDistance) / getDist(point1, point2);
     //point between ... x = (b - a) * fraction
-    const margin = addPoints(point2, {x: -point1.x, y: -point1.y});
+    const margin = addPoints(point1, {x: -point2.x, y: -point2.y});
     const marginFraction = {x: margin.x * percentageBetween, y: margin.y * percentageBetween};
     return addPoints(point1, marginFraction);
 }
