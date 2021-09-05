@@ -4,7 +4,7 @@ import type { INode, PathNode } from "./models/Node";
 import type { Path } from "./models/Path";
 import type { Route } from "./models/Route";
 import type { WorkerMessage } from "./models/WorkerMessage";
-import { getDist } from "./utils/functions";
+import { getDist, pointsToDist } from "./utils/functions";
 
 //handle different commands
 onmessage = async function(e){
@@ -140,16 +140,6 @@ const calcPaths = (paths: Path[], nodes: calcNode[]): calcPath[] => {
             end
         }
     })
-}
-
-const pointsToDist = (points: Coords[]) => {
-    let dist: number = 0;
-    for (let i = 1; i < points.length; i++) {
-        const p = points[i];
-        const prevP = points[i - 1];
-        dist += getDist(prevP, p);
-    }
-    return dist;
 }
 
 const findNodes = (pathIndex: number, nodes: calcNode[]): calcNode[] => {

@@ -6,6 +6,16 @@ export const getDist = (pointA: Coords, pointB: Coords) => {
     );
 }
 
+export const pointsToDist = (points: Coords[]) => {
+    let dist: number = 0;
+    for (let i = 1; i < points.length; i++) {
+        const p = points[i];
+        const prevP = points[i - 1];
+        dist += getDist(prevP, p);
+    }
+    return dist;
+}
+
 export const addPoints = (pointA: Coords, pointB: Coords) => {
     return {x: pointA.x + pointB.x, y: pointA.y + pointB.y}
 }
