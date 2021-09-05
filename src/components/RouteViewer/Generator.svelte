@@ -8,6 +8,7 @@ import Settings from "./Settings.svelte";
 import myWorker from "../../web-worker?worker";
 import { nodes, paths } from "src/store";
 import type { GenerateSettings } from "src/models/GenerateSettings";
+import type { WorkerMessage } from "src/models/WorkerMessage";
 
 let w: Worker;
 let settings: GenerateSettings;
@@ -28,14 +29,17 @@ const startWorker = () => {
     w.onmessage = onMessage;
 }
 const onMessage = (e) => {
-    const mess = e.data;
+    const mess: WorkerMessage = e.data;
     switch (mess.type) {
-        case 'hello':
+        case 'update':
             console.log(mess.data);
             break;
-
+        case 'finish':
+            w.terminate();
+            w = undefined;
+            break;
         default:
-            console.log(mess.data);
+            console.log(mess.type, mess.data);
             break;
     }
 }

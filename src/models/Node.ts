@@ -1,6 +1,6 @@
 import type Coords from "./Coords";
 
-export interface PathNode {
+export type PathNode = {
     index: number,
     start: boolean
 }

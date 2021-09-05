@@ -1,7 +1,7 @@
-export type PathNode = { index: number, start: boolean};
+import type { PathNode } from "./Node";
 
 export interface Route {
     dist: number,
     points: PathNode[],
-    cps: { index: number, type: 'cp' | 'ring'}[]
+    cps: { num: number, type: 'cp' | 'ring'}[]
 }
