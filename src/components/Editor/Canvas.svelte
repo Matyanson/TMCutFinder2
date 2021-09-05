@@ -227,7 +227,7 @@ import { getContext, onMount } from "svelte";
         height: 100%;
         user-select: none;
         -webkit-user-drag: none;
-        filter: opacity(0.85);
+        opacity: 0.85;
     }
     svg polyline {
         fill: none;
