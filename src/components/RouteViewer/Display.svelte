@@ -71,14 +71,17 @@ const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
 
         dist += getDist(point1, point2);
         secondIndex++;
+        // console.log(secondIndex, point2, dist, chosenDistance);
     }
-    const point1 = coords[secondIndex - 1];
-    const point2 = coords[secondIndex];
-    const percentageBetween = (dist - chosenDistance) / getDist(point1, point2);
-    //point between ... x = (b - a) * fraction
-    const margin = addPoints(point1, {x: -point2.x, y: -point2.y});
+    const p1 = coords[secondIndex - 1];
+    const p2 = coords[secondIndex];
+    const percentageBetween = getDist(p1, p2) !== 0 ? (dist - chosenDistance) / getDist(p1, p2) : 0;
+    //point between ... p1 & p2
+    const margin = addPoints(p1, {x: -p2.x, y: -p2.y});
     const marginFraction = {x: margin.x * percentageBetween, y: margin.y * percentageBetween};
-    return addPoints(point1, marginFraction);
+    // console.log(secondIndex - 1, coords[secondIndex - 1]);
+    // console.log(secondIndex, coords[secondIndex]);
+    return addPoints(p1, marginFraction);
 }
 </script>
 
