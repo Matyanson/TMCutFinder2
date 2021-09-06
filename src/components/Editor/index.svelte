@@ -31,7 +31,7 @@ import ItemMenu from "./ItemMenu.svelte";
 import { loadMap, saveMap } from "./map";
 import Toolbar from "./Toolbar.svelte";
 
-let edit: boolean = false;
+let edit: boolean = true;
 
 
 const handleFileChange = (e: Event) => {
