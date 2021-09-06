@@ -48,11 +48,11 @@ const handleResize = () => {
 
 onMount(setup);
 
-const mergePoints = (pathNodes: PathNode[]) => {
+const mergePoints = (pathNodes: PathNode[]): Coords[] => {
     const pathPoints = pathNodes
     .map(p => {
         return p.start ? 
-        $paths[p.index].points.reverse() : 
+        $paths[p.index].points.slice().reverse() :  //dooooont fricking mutate!!!!
         $paths[p.index].points;
     })
     return pathPoints.flat();
@@ -71,12 +71,10 @@ const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
         if(dist > chosenDistance) break;
     }
     
-    console.log(firstIndex, coords.length, dist, chosenDistance);
     const p1 = coords[firstIndex];
     const p2 = coords[firstIndex + 1];
     const fractionBetween = getDist(p1, p2) !== 0 ? (dist - chosenDistance) / getDist(p1, p2) : 1;
-    console.log(fractionBetween);
-    
+        
     //point between ... p1 & p2
     return lerpPoint(p1, p2, 1 - fractionBetween);
 }
