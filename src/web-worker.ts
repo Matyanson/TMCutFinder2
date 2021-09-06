@@ -26,7 +26,7 @@ type calcPath = Path & {dist: number, start: calcNode, end: calcNode};
 
 const calculate = (data: MapData) =>{
     const {paths, nodes, settings} = data;
-    const {limit, maxRouteLength} = settings;
+    const {limit, maxLengthMultiple} = settings;
 
     //cache data into the objects
     const checkpoints = nodes
@@ -49,7 +49,7 @@ const calculate = (data: MapData) =>{
     const startPoint: PathNode = findStartPoint(nodes);
     if(!startPoint) return postMessage({ type: 'error', data: 'No start node found'} as WorkerMessage);
     
-    let distLimit = totalDist * maxRouteLength;
+    let distLimit = totalDist * maxLengthMultiple;
     let routesNumLimit = limit;
     let finalRoutes = [];
 
@@ -120,7 +120,7 @@ const calculate = (data: MapData) =>{
         finalRoutes = finalRoutes.slice(0, routesNumLimit);
 
         //set the distLimit to worst route
-        //if(finalRoutes.length === routesNumLimit)
+        if(settings.insertOnlyShorter || finalRoutes.length === routesNumLimit)
         distLimit = finalRoutes[finalRoutes.length-1].dist;
     }
 }

@@ -1,4 +1,5 @@
 export interface GenerateSettings {
     limit: number,
-    maxRouteLength: number
+    maxLengthMultiple: number,
+    insertOnlyShorter: boolean
 }
