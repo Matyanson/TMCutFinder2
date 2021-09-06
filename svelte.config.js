@@ -3,8 +3,7 @@
 // https://github.com/sveltejs/kit/issues/754
 
 import preprocess from 'svelte-preprocess';
-import node from '@sveltejs/adapter-node';
-import adapter from '@sveltejs/adapter-static';
+import vercel from '@sveltejs/adapter-vercel';
 import { resolve } from 'path';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -16,7 +15,7 @@ const config = {
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
-		adapter: node({
+		adapter: vercel({
 			fallback: 'index.html'
 		}),
 		ssr: true,
