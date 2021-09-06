@@ -19,7 +19,7 @@ import type { PathNode } from "src/models/Node";
 import type { Route } from "src/models/Route";
 import { imgSrc, paths } from "src/store";
 import { sizeTracker } from "src/utils/dom";
-import { addPoints, getDist, pointsToDist, pointsToPath } from "src/utils/functions";
+import { getDist, lerpPoint, pointsToDist, pointsToPath } from "src/utils/functions";
 import { onMount } from "svelte";
 
 export let route: Route;
@@ -63,25 +63,22 @@ const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
     const chosenDistance = totalDist * percentage / 100;
 
     let dist = 0;
-    let secondIndex = 1;     //between this and first index is the desired point
+    let firstIndex = 0;     //between this and second index is the desired point
 
-    while(dist < chosenDistance && secondIndex < coords.length - 1){
-        const point1 = coords[secondIndex - 1];
-        const point2 = coords[secondIndex];
-
-        dist += getDist(point1, point2);
-        secondIndex++;
-        // console.log(secondIndex, point2, dist, chosenDistance);
+    for (let i = 0; i < coords.length - 1; i++) {
+        firstIndex = i;
+        dist += getDist(coords[firstIndex], coords[firstIndex + 1]);
+        if(dist > chosenDistance) break;
     }
-    const p1 = coords[secondIndex - 1];
-    const p2 = coords[secondIndex];
-    const percentageBetween = getDist(p1, p2) !== 0 ? (dist - chosenDistance) / getDist(p1, p2) : 0;
+    
+    console.log(firstIndex, coords.length, dist, chosenDistance);
+    const p1 = coords[firstIndex];
+    const p2 = coords[firstIndex + 1];
+    const fractionBetween = getDist(p1, p2) !== 0 ? (dist - chosenDistance) / getDist(p1, p2) : 1;
+    console.log(fractionBetween);
+    
     //point between ... p1 & p2
-    const margin = addPoints(p1, {x: -p2.x, y: -p2.y});
-    const marginFraction = {x: margin.x * percentageBetween, y: margin.y * percentageBetween};
-    // console.log(secondIndex - 1, coords[secondIndex - 1]);
-    // console.log(secondIndex, coords[secondIndex]);
-    return addPoints(p1, marginFraction);
+    return lerpPoint(p1, p2, 1 - fractionBetween);
 }
 </script>
 

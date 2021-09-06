@@ -20,6 +20,17 @@ export const addPoints = (pointA: Coords, pointB: Coords) => {
     return {x: pointA.x + pointB.x, y: pointA.y + pointB.y}
 }
 
+export const lerp = (v0: number, v1: number, t: number) => {
+    return (1 - t) * v0 + t * v1;
+}
+
+export const lerpPoint = (p1: Coords, p2: Coords, t: number) => {
+    return {
+        x: lerp(p1.x, p2.x, t),
+        y: lerp(p1.y, p2.y, t)
+    };
+}
+
 export const nearestIndex = (pointA: Coords, points: Coords[]) => {
     if(!points[0]) return -1;
     let res = 0;

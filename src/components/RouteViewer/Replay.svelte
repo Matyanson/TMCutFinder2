@@ -24,7 +24,7 @@
     let interval;
     const anim = {
         manual: true,
-        fps: 25,
+        fps: 60,
         speed: 1,
         percentage: 0
     }
