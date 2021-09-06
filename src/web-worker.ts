@@ -47,7 +47,8 @@ const calculate = (data: MapData) =>{
     
     const cpCount = checkpoints.length;
     const startPoint: PathNode = findStartPoint(nodes);
-    if(!startPoint) return postMessage({ type: 'error', data: 'No start node found'} as WorkerMessage);
+    const finishIndex = nodes.findIndex(n => n.type == 'finish');
+    if(!startPoint || finishIndex < 0) return postMessage({ type: 'error', data: 'No start or finish node found'} as WorkerMessage);
     
     let distLimit = totalDist * maxLengthMultiple;
     let routesNumLimit = limit;
@@ -87,7 +88,7 @@ const calculate = (data: MapData) =>{
 
         //final point
         if(curNode.type == 'finish' && cps.length >= cpCount){
-            addFinalRoute(route);
+            addFinalRoute({...route, points: points.slice(1)});
             return;
         }
         
@@ -105,7 +106,6 @@ const calculate = (data: MapData) =>{
     }
 
     function addFinalRoute(route) {
-        console.log('add');
         let { dist = 0 } = route;
         //insert newRoute (insert sorting alghorithm)
         for(let i = 0; i <= finalRoutes.length; i++){
@@ -121,13 +121,13 @@ const calculate = (data: MapData) =>{
 
         //set the distLimit to worst route
         if(settings.insertOnlyShorter || finalRoutes.length === routesNumLimit)
-        distLimit = finalRoutes[finalRoutes.length-1].dist;
+            distLimit = finalRoutes[finalRoutes.length-1].dist;
     }
 }
 
 
 const insertIntoIndex = (arr: any[], index: number, el) => {
-    return [...arr.slice(0, index), el, ...arr.slice(index + 1)];
+    return [...arr.slice(0, index), el, ...arr.slice(index)];
 }
 
 const calcPaths = (paths: Path[], nodes: calcNode[]): calcPath[] => {

@@ -55,10 +55,10 @@ const onMessage = (e) => {
     const mess: WorkerMessage = e.data;
     switch (mess.type) {
         case 'update':
-            console.log(mess.data);
             routes = mess.data;
             break;
         case 'finish':
+            routes = mess.data;
             w.terminate();
             w = undefined;
             break;

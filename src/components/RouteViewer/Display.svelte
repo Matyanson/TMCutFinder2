@@ -25,7 +25,7 @@ import { onMount } from "svelte";
 export let route: Route;
 export let percentage = 0;
 let routePoints: Coords[];
-$: routePoints = mergePoints(route.points.slice(1)) ?? [];
+$: routePoints = mergePoints(route.points) ?? [];
 $: car = routePoints.length > 0 ?
 getPercentagePoint(percentage, routePoints) :
 {x:0,y:0};
