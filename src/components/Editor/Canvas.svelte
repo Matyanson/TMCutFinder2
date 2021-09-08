@@ -172,7 +172,7 @@ import { getContext, onMount } from "svelte";
         if(!svg) return;
         const svgRect = svg.getBoundingClientRect();
         if(svgRect.width < 1 || svgRect.height < 1) return;
-        aspect_ratio =  svgRect.width / svgRect.height;
+        aspect_ratio = Math.floor(svgRect.width * 100 / svgRect.height) / 100;
         unit = svg.clientHeight / 100;
     }
 
