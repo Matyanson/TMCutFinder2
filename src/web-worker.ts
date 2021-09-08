@@ -69,6 +69,16 @@ const calculate = (data: MapData) =>{
         const curNode = curPoint.start ? curPath.start : curPath.end;
         if(!curNode) return;
 
+        //recursive block
+        dist += curPath.dist;
+        if(dist > distLimit) return;
+        
+        //final point
+        if(curNode.type == 'finish' && cps.length >= cpCount){
+            addFinalRoute({...route, points: points.slice(1)});
+            return;
+        }
+
         const pointsFromHere: PathNode[] = curNode.paths
         .filter(p => p.index != curPoint.index || points.length < 2)    //don't go back unless start
         .map(p => {
@@ -80,16 +90,6 @@ const calculate = (data: MapData) =>{
             if(!cps.some(cp => cp.num == curNode.cpNum)){
                 cps.push({num: curNode.cpNum, type: curNode.type});
             }
-        }
-        dist += curPath.dist;
-
-        //recursive block
-        if(dist > distLimit) return;
-
-        //final point
-        if(curNode.type == 'finish' && cps.length >= cpCount){
-            addFinalRoute({...route, points: points.slice(1)});
-            return;
         }
         
         //move to next point
