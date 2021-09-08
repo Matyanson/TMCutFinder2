@@ -75,6 +75,18 @@ function createPaths() {
             nodes.changePathIndex(index, newIndex, true);
             return newIndex;
         },
+        clearEmpty: function () {
+            update(old => 
+                old.filter((p, i) => {
+                    if(p.points.length < 3){
+                        nodes.deletePathNodes(i);
+                        nodes.shiftPathIndex(i + 1, -1);
+                        return false;
+                    }
+                    return true;
+                })
+            );
+        },
         reset: () => set([])
     }
 }
@@ -100,7 +112,7 @@ function createNodes() {
             const pointIndex = get(paths)[pathIndex].points.findIndex(p => p == coords);
             if(pointIndex < 0) return -1;
             const newPathIndex = paths.split(pathIndex, pointIndex);
-            return this.add({
+            const res = this.add({
                 coords,
                 type: nodeType,
                 paths: [
@@ -108,6 +120,8 @@ function createNodes() {
                     { index: newPathIndex, start: false }
                 ]
             })
+            paths.clearEmpty();
+            return res;
         },
         addPaths: function (index: number, paths: PathNode | PathNode[]) {
             update(old => {
