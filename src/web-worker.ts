@@ -96,6 +96,19 @@ const calculate = (data: MapData) =>{
             //go back
             if(settings.turnAround && pathRepetition < 3)
                 pointsFromHere.push({index: curPoint.index, start: !curPoint.start});
+            //ring respawn
+            if(settings.ringRespawn && curNode.type == 'ring'){
+                for(let p of points.slice().reverse()) {
+                    const lastCP = cachedNodes.find(n => n.type == 'cp' && 
+                    n.paths.some(pathNode => pathNode.index == p.index && pathNode.start == p.start));
+
+                    if(lastCP){
+                        const pointsFromCP = lastCP.paths.map(p => { return {...p, start: !p.start}});
+                        pointsFromHere.push(...pointsFromCP);
+                        break;
+                    }
+                }
+            }
 
             if(!cps.some(cp => cp.num == curNode.cpNum)){
                 cps.push({num: curNode.cpNum, type: curNode.type});
