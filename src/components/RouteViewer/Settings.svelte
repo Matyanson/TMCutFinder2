@@ -9,6 +9,9 @@
         insert only if route is shorter: <input type="checkbox" bind:checked={settings.insertOnlyShorter} />
     </div>
     <div class="item">
+        can respawn from ring: <input type="checkbox" bind:checked={settings.ringRespawn} />
+    </div>
+    <div class="item">
         can turn around: <input type="checkbox" bind:checked={settings.turnAround} />
     </div>
     <div class="item">
