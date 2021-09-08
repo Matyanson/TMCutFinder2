@@ -1,14 +1,16 @@
 <div class="container" bind:this={svg}>
     {#if routePoints.length > 0}
+    {#each routePoints as points}
     <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         <polyline 
         vector-effect="non-scaling-stroke"
-        points={pointsToPath(routePoints, aspect_ratio)}
+        points={pointsToPath(points, aspect_ratio)}
         />
     </svg>
     <svg>
         <circle r={7} cx={`${car.x / aspect_ratio}%`} cy={`${car.y}%`} />
     </svg>
+    {/each}
     {/if}
     <img alt="screenshot of map" src={$imgSrc}/>
 </div>
@@ -24,10 +26,10 @@ import { onMount } from "svelte";
 
 export let route: Route;
 export let percentage = 0;
-let routePoints: Coords[];
+let routePoints: Coords[][];
 $: routePoints = mergePoints(route.points) ?? [];
 $: car = routePoints.length > 0 ?
-getPercentagePoint(percentage, routePoints) :
+getPercentagePoint2d(percentage, routePoints) :
 {x:0,y:0};
 
 let svg: Element;
@@ -48,16 +50,30 @@ const handleResize = () => {
 
 onMount(setup);
 
-const mergePoints = (pathNodes: PathNode[]): Coords[] => {
+const mergePoints = (pathNodes: PathNode[]): Coords[][] => {
     const pathPoints = pathNodes
     .map(p => {
         return p.start ? 
         $paths[p.index].points.slice().reverse() :  //dooooont fricking mutate!!!!
         $paths[p.index].points;
     })
-    return pathPoints.flat();
+    return pathPoints;
 }
+const getPercentagePoint2d = (percentage: number, points: Coords[][]): Coords =>{
+    const totalDist = points.map(p => pointsToDist(p)).reduce((total, cur) => total + cur);
+    const chosenDistance = totalDist * percentage / 100;
 
+    let dist = 0;
+    for(let i in points){
+        dist += pointsToDist(points[i]);
+        if(dist > chosenDistance){
+            const curDist = pointsToDist(points[i]);
+            const fraction = (dist - chosenDistance) / curDist;
+            return getPercentagePoint((1 - fraction) * 100, points[i]);
+        }
+    }
+    return points[points.length - 1][points[points.length - 1].length - 1];
+}
 const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
     const totalDist = pointsToDist(coords);
     const chosenDistance = totalDist * percentage / 100;
