@@ -72,14 +72,14 @@ const calculate = (data: MapData) =>{
         //recursive block
         dist += curPath.dist;
         if(dist > distLimit) return;
-        
+
         //final point
         if(curNode.type == 'finish' && cps.length >= cpCount){
             addFinalRoute({...route, points: points.slice(1)});
             return;
         }
 
-        const pointsFromHere: PathNode[] = curNode.paths
+        let pointsFromHere: PathNode[] = curNode.paths
         .filter(p => p.index != curPoint.index || points.length < 2)    //don't go back unless start
         .map(p => {
             return {index: p.index, start: !p.start};
@@ -87,6 +87,16 @@ const calculate = (data: MapData) =>{
 
         //calculate things
         if(curNode.type == 'cp' || curNode.type == 'ring'){
+            let pathRepetition = 0;
+            for (let i = points.length - 1; i > -1; i--) {
+                if(points[i].index !== curPoint.index)
+                    break;
+                pathRepetition++;
+            }
+            //go back
+            if(settings.turnAround && pathRepetition < 3)
+                pointsFromHere.push({index: curPoint.index, start: !curPoint.start});
+
             if(!cps.some(cp => cp.num == curNode.cpNum)){
                 cps.push({num: curNode.cpNum, type: curNode.type});
             }
@@ -98,6 +108,8 @@ const calculate = (data: MapData) =>{
             const wrongWay = () => nextPath.type == 'oneway' && p.start == true;
             //if not wrong way
             if(nextPath && !wrongWay()){
+                if(p.index == curPoint.index)
+                    dist += settings.turnAroundPenalty;
                 const nextPoints = [...points, p];
                 const nextCps = [...cps];
                 continueRoute({points: nextPoints, cps: nextCps, dist});

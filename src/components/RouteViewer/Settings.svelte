@@ -8,6 +8,12 @@
     <div class="item">
         insert only if route is shorter: <input type="checkbox" bind:checked={settings.insertOnlyShorter} />
     </div>
+    <div class="item">
+        can turn around: <input type="checkbox" bind:checked={settings.turnAround} />
+    </div>
+    <div class="item">
+        turn around penalty (additional length units): <input type="number" min="0" bind:value={settings.turnAroundPenalty} />
+    </div>
 </div>
 <script lang="ts">
     import type { GenerateSettings } from "src/models/GenerateSettings";
@@ -15,7 +21,10 @@
     export let settings: GenerateSettings = {
         limit: 10,
         maxLengthMultiple: 2,
-        insertOnlyShorter: true
+        insertOnlyShorter: true,
+        ringRespawn: true,
+        turnAround: true,
+        turnAroundPenalty: 0
     }
 </script>
 

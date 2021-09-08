@@ -1,5 +1,8 @@
 export interface GenerateSettings {
     limit: number,
     maxLengthMultiple: number,
-    insertOnlyShorter: boolean
+    insertOnlyShorter: boolean,
+    ringRespawn: boolean,
+    turnAround: boolean,
+    turnAroundPenalty: number
 }
