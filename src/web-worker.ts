@@ -75,7 +75,7 @@ const calculate = (data: MapData) =>{
 
         //final point
         if(curNode.type == 'finish' && cps.length >= cpCount){
-            addFinalRoute({...route, points: points.slice(1)});
+            addFinalRoute({points: points.slice(1), dist, cps});
             return;
         }
 
