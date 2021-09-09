@@ -73,13 +73,14 @@ const onMessage = (e) => {
 <style>
     .routes{
         display: flex;
-        flex-flow: row;
-
+        flex-flow: row wrap;
     }
     .route{
         background: #0f5f8d;
         color: #fff;
         padding: 5px;
+        margin: 2px;
+        border-radius: 3px;
     }
     .route.selected{
         background: #3b9bd3;
