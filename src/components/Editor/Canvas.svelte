@@ -179,8 +179,8 @@ import { getContext, onMount } from "svelte";
     const saveMousePosition = (mouseX: number, mouseY: number) => {
         const svgRect = svg.getBoundingClientRect();
         m = {
-            x: Math.floor((mouseX - svgRect.left) / unit * 100) / 100,
-            y: Math.floor((mouseY - svgRect.top) / unit * 100) / 100
+            x: Math.floor((mouseX - svgRect.left) / unit * 1000) / 1000,
+            y: Math.floor((mouseY - svgRect.top) / unit * 1000) / 1000
         }
     }
 
