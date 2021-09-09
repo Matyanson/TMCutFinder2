@@ -78,7 +78,7 @@ function createPaths() {
         clearEmpty: function () {
             update(old => 
                 old.filter((p, i) => {
-                    if(p.points.length < 3){
+                    if(p.points.length < 2){
                         nodes.deletePathNodes(i);
                         nodes.shiftPathIndex(i + 1, -1);
                         return false;
