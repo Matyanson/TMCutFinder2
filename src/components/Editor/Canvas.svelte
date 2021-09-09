@@ -55,7 +55,7 @@ import { getContext, onMount } from "svelte";
     let m2Down = false;
 
     //canvas objects
-    const minDist = 1;
+    const minDist = 0.7;
     let hoverPath = -1;
     let hoverNode = -1;
     let lastPoint: Coords = {x: 0, y: 0};
@@ -172,15 +172,15 @@ import { getContext, onMount } from "svelte";
         if(!svg) return;
         const svgRect = svg.getBoundingClientRect();
         if(svgRect.width < 1 || svgRect.height < 1) return;
-        aspect_ratio = Math.floor(svgRect.width * 100 / svgRect.height) / 100;
+        aspect_ratio = Math.floor(svgRect.width * 1000 / svgRect.height) / 1000;
         unit = svg.clientHeight / 100;
     }
 
     const saveMousePosition = (mouseX: number, mouseY: number) => {
         const svgRect = svg.getBoundingClientRect();
         m = {
-            x: Math.floor((mouseX - svgRect.left) / unit * 1000) / 1000,
-            y: Math.floor((mouseY - svgRect.top) / unit * 1000) / 1000
+            x: Math.floor((mouseX - svgRect.left) / unit * 100) / 100,
+            y: Math.floor((mouseY - svgRect.top) / unit * 100) / 100
         }
     }
 
