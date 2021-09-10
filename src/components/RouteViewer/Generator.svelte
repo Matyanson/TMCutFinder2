@@ -4,14 +4,7 @@
 
     <div class="routes">
     {#each routes as r, i}
-        <div class:selected={i == selected} class="route" on:click={() => selectRoute(i)}>
-            <div class="dist">{Math.floor(r.dist)}</div>
-            <div class="cps">
-                {#each r.cps as cp}
-                    <div>{cp.num}</div>
-                {/each}
-            </div>
-        </div>
+        <RouteBtn selected={i == selected} route={r} on:click={() => selectRoute(i)} />
     {/each}
     </div>
 </div>
@@ -23,6 +16,7 @@ import { nodes, paths } from "src/store";
 import type { GenerateSettings } from "src/models/GenerateSettings";
 import type { WorkerMessage } from "src/models/WorkerMessage";
 import type { Route } from "src/models/Route";
+import RouteBtn from "./RouteBtn.svelte";
 
 let w: Worker;
 let settings: GenerateSettings;
@@ -79,20 +73,5 @@ const onMessage = (e) => {
     .routes{
         display: flex;
         flex-flow: row wrap;
-    }
-    .route{
-        background: #0f5f8d;
-        color: #fff;
-        padding: 5px;
-        margin: 2px;
-        border-radius: 3px;
-    }
-    .route.selected{
-        background: #3b9bd3;
-        color: #000;
-    }
-    .cps{
-        display: flex;
-        flex-flow: row;
     }
 </style>
