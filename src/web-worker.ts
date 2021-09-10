@@ -4,13 +4,13 @@ import type { INode, PathNode } from "./models/Node";
 import type { Path } from "./models/Path";
 import type { Route } from "./models/Route";
 import type { WorkerMessage } from "./models/WorkerMessage";
-import { getDist, pointsToDist } from "./utils/functions";
+import { median, pointsToDist, random } from "./utils/functions";
 
 //handle different commands
 onmessage = async function(e){
     const mess: WorkerMessage = e.data;
     switch(mess.type){
-        case "calculate":
+        case 'calculate':
             calculate(mess.data);
             break;
         default:
@@ -49,6 +49,7 @@ const calculate = (data: MapData) => {
     const startPoint: PathNode = findStartPoint(nodes);
     const finishIndex = nodes.findIndex(n => n.type == 'finish');
     if(!startPoint || finishIndex < 0) return postMessage({ type: 'error', data: 'No start or finish node found'} as WorkerMessage);
+    const order = getPointOrder();
     
     let distLimit = totalDist * maxLengthMultiple;
     let routesNumLimit = limit;
@@ -86,6 +87,8 @@ const calculate = (data: MapData) => {
         if(curNode.type == 'cp' || curNode.type == 'ring'){
             cps = addCP(curNode.cpNum, curNode.type, cps);
         }
+        if(random(0, 10000000 / points.length) == 0)
+            postMessage({type: 'progress', data: getPercentage(order, points)});
 
         pointsFromHere = filterNextPoints(pointsFromHere);
         
@@ -115,12 +118,12 @@ const calculate = (data: MapData) => {
             distLimit = finalRoutes[finalRoutes.length-1].dist;
     }
 
-    function nextpoints(paths: PathNode[], curPoints: PathNode[]) {
+    function nextpoints(paths: PathNode[], curPoints: PathNode[]): PathNode[] {
         const curPoint = curPoints[curPoints.length -1];
         return paths
         .filter(p => p.index != curPoint.index || curPoints.length < 2)    //don't go back unless start
         .map(p => {
-            return {index: p.index, start: !p.start};
+            return {...p, start: !p.start};
         });
     }
 
@@ -190,6 +193,57 @@ const calculate = (data: MapData) => {
         if(!cps.some(cp => cp.num == cpNum))
             cps.push({num: cpNum, type: cpType});
         return cps;
+    }
+
+    function getPointOrder(){
+        const order: number[][] = [];
+
+        continueSearch([startPoint], 0);
+
+        return order;
+
+        function continueSearch(points: PathNode[], depth: number = 0){
+            const lastPoint = points[points.length -1];
+            const curPath = cachedPaths[lastPoint.index];
+            if(!curPath) return;
+            const curNode = lastPoint.start ? curPath.start : curPath.end;
+            if(!curNode) return;
+
+            if(order[depth] == undefined) order[depth] = [];
+            if(!order[depth].includes(lastPoint.index)) order[depth].push(lastPoint.index);
+
+            const pointsFromHere = curNode.paths
+            .filter(pathNode => 
+                depth < 1 || 
+                (lastPoint.index != pathNode.index && 
+                !order[depth].includes(pathNode.index) &&
+                !points.some(p => p.index == pathNode.index))
+            )
+            .map(p => {
+                return {...p, start: !p.start};
+            })
+            for(const p of pointsFromHere){
+                continueSearch([...points, p], depth + 1);
+            }
+        }
+    }
+
+    function getPercentage(order: number[][], points: PathNode[], precision: number = 1000) {
+        precision = precision < points.length ? precision : points.length;
+        let percentages = [];
+        for(let i = 0; i < precision; i++){
+            const pathIndex = points[i].index;
+            const index = order[i]?.findIndex(n => n == pathIndex);
+            const length = order[i]?.length;
+            if(index > -1 && length > 0){
+                const p = (index + 1) / length;
+                percentages.push(p);
+            }
+        }
+        const average = percentages.reduce((total, cur) => total + cur) / percentages.length;
+        const med = median(percentages);
+        const both = (average + med) / 2;
+        return 100 * both;
     }
 }
 

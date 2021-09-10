@@ -54,3 +54,17 @@ export const pointsToPath = (points: Coords[], ratio: number) => {
     }
     return path;
 }
+
+export const median = (numbers: number[]) => {
+    const sorted = numbers.slice().sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+
+    if (sorted.length % 2 === 0)
+        return (sorted[middle - 1] + sorted[middle]) / 2;
+        
+    return sorted[middle];
+}
+
+export const random = (from: number, to: number): number => {
+    return Math.floor(Math.random() * to) + from;
+}

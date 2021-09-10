@@ -1,7 +1,10 @@
 <div class="generator">
     <Settings bind:settings />
     <button on:click={startWorker}>Re-route</button>
-
+    <button on:click={resetWorker}>Reset</button>
+    {#if w}
+    <ProgressBar bind:progress />
+    {/if}
     <div class="routes">
     {#each routes as r, i}
         <RouteBtn selected={i == selected} route={r} on:click={() => selectRoute(i)} />
@@ -17,11 +20,13 @@ import type { GenerateSettings } from "src/models/GenerateSettings";
 import type { WorkerMessage } from "src/models/WorkerMessage";
 import type { Route } from "src/models/Route";
 import RouteBtn from "./RouteBtn.svelte";
+import ProgressBar from "../ProgressBar.svelte";
 
 let w: Worker;
 let settings: GenerateSettings;
 let routes: Route[] = [];
 let selected: number;
+let progress: number = 0;
 
 export let route: Route = null;
 
@@ -50,6 +55,12 @@ const startWorker = () => {
     });
     w.onmessage = onMessage;
 }
+const resetWorker = () => {
+    console.log('closing worker');
+    if(w)
+    w.terminate();
+    w = undefined;
+}
 const onMessage = (e) => {
     const mess: WorkerMessage = e.data;
     switch (mess.type) {
@@ -58,8 +69,10 @@ const onMessage = (e) => {
             break;
         case 'finish':
             routes = mess.data;
-            w.terminate();
-            w = undefined;
+            resetWorker();
+            break;
+        case 'progress':
+            progress = mess.data;
             break;
         default:
             console.log(mess.type, mess.data);
