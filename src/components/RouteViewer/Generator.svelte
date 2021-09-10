@@ -30,10 +30,15 @@ let routes: Route[] = [];
 let selected: number;
 
 export let route: Route = null;
-$: route = routes[selected] ?? {dist:0, points:[], cps:[]};
+
+$: {
+    routes;
+    selected = -1;
+}
 
 const selectRoute = (i) => {
     selected = i;
+    route = routes[i];
 }
 
 const startWorker = () => {
