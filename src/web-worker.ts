@@ -24,7 +24,7 @@ type calcNode = INode & {cpNum: number};
 type calcPath = Path & {dist: number, start: calcNode, end: calcNode};
 
 
-const calculate = (data: MapData) =>{
+const calculate = (data: MapData) => {
     const {paths, nodes, settings} = data;
     const {limit, maxLengthMultiple} = settings;
 
@@ -79,55 +79,21 @@ const calculate = (data: MapData) =>{
             return;
         }
 
-        let pointsFromHere: PathNode[] = curNode.paths
-        .filter(p => p.index != curPoint.index || points.length < 2)    //don't go back unless start
-        .map(p => {
-            return {index: p.index, start: !p.start};
-        });
+        let pointsFromHere: PathNode[] = nextpoints(curNode.paths, points);
 
         //calculate things
+        pointsFromHere.push(...findNextPoints(curNode, points));
         if(curNode.type == 'cp' || curNode.type == 'ring'){
-            let pathRepetition = 0;
-            for (let i = points.length - 1; i > -1; i--) {
-                if(points[i].index !== curPoint.index)
-                    break;
-                pathRepetition++;
-            }
-            //go back
-            if(settings.turnAround && pathRepetition < 3)
-                pointsFromHere.push({index: curPoint.index, start: !curPoint.start});
-            //ring respawn
-            if(settings.ringRespawn && curNode.type == 'ring'){
-                for(let p of points.slice().reverse()) {
-                    const lastCP = cachedNodes.find(n => n.type == 'cp' && 
-                    n.paths.some(pathNode => pathNode.index == p.index && pathNode.start == p.start));
-
-                    if(lastCP){
-                        const pointsFromCP = lastCP.paths.map(p => { return {...p, start: !p.start}});
-                        pointsFromHere.push(...pointsFromCP);
-                        break;
-                    }
-                }
-            }
-
-            if(!cps.some(cp => cp.num == curNode.cpNum)){
-                cps.push({num: curNode.cpNum, type: curNode.type});
-            }
+            cps = addCP(curNode.cpNum, curNode.type, cps);
         }
+
+        pointsFromHere = filterNextPoints(pointsFromHere);
         
         //move to next point
-        pointsFromHere.forEach(p => {
-            const nextPath = cachedPaths[p.index];
-            const wrongWay = () => nextPath.type == 'oneway' && p.start == true;
-            //if not wrong way
-            if(nextPath && !wrongWay()){
-                if(p.index == curPoint.index)
-                    dist += settings.turnAroundPenalty;
-                const nextPoints = [...points, p];
-                const nextCps = [...cps];
-                continueRoute({points: nextPoints, cps: nextCps, dist});
-            }
-        })
+        for(const p of pointsFromHere){
+            const nextRoute = getNextRoute({points: [...points], cps: [...cps], dist}, p);
+            continueRoute(nextRoute);
+        }
     }
 
     function addFinalRoute(route) {
@@ -148,9 +114,87 @@ const calculate = (data: MapData) =>{
         if(settings.insertOnlyShorter || finalRoutes.length === routesNumLimit)
             distLimit = finalRoutes[finalRoutes.length-1].dist;
     }
+
+    function nextpoints(paths: PathNode[], curPoints: PathNode[]) {
+        const curPoint = curPoints[curPoints.length -1];
+        return paths
+        .filter(p => p.index != curPoint.index || curPoints.length < 2)    //don't go back unless start
+        .map(p => {
+            return {index: p.index, start: !p.start};
+        });
+    }
+
+    function findNextPoints(curNode: calcNode, curPoints: PathNode[]) {
+        const curPoint = curPoints[curPoints.length -1];
+        const nextPoints: PathNode[] = [];
+        if(curNode.type == 'cp' || curNode.type == 'ring'){
+            const pathRepetition = getPathRepetition(curPoints);
+            //go back
+            if(settings.turnAround && pathRepetition < 3)
+                nextPoints.push({index: curPoint.index, start: !curPoint.start});
+            //ring respawn
+            if(settings.ringRespawn && curNode.type == 'ring'){
+                nextPoints.push(...getPointsFromRingRespawn(curPoints));
+            }
+        }
+        return nextPoints;
+    }
+
+    function filterNextPoints(points: PathNode[]){
+        const filtered = [];
+        for(const p of points){
+            const nextPath = cachedPaths[p.index];
+            const wrongWay = () => nextPath.type == 'oneway' && p.start == true;
+            //if not wrong way
+            if(nextPath && !wrongWay()){
+                filtered.push(p);
+            }
+        }
+        return filtered;
+    }
+
+    function getNextRoute(route: Route, pointTo: PathNode) {
+        const pointFrom = route.points[route.points.length -1];
+        const newRoute = {...route};
+        if(pointTo.index == pointFrom.index)
+            newRoute.dist += settings.turnAroundPenalty;
+        newRoute.points.push(pointTo);
+        return newRoute;
+    }
+
+    function getPathRepetition(points: PathNode[]) {
+        const curPoint = points[points.length -1];
+        let res = 0;
+        for (let i = points.length - 1; i > -1; i--) {
+            if(points[i].index !== curPoint.index)
+                break;
+                res++;
+        }
+        return res;
+    }
+    
+    function getPointsFromRingRespawn(points: PathNode[]) {
+        for(let p of points.slice().reverse()) {
+            const lastCP = cachedNodes.find(n => n.type == 'cp' && 
+            n.paths.some(pathNode => pathNode.index == p.index && pathNode.start == p.start));
+
+            if(lastCP){
+                const pointsFromCP = lastCP.paths.map(p => { return {...p, start: !p.start}});
+                return pointsFromCP;
+            }
+        }
+        return [];
+    }
+
+    function addCP(cpNum: number, cpType: Route['cps'][0]['type'], cps: Route['cps']) {
+        if(!cps.some(cp => cp.num == cpNum))
+            cps.push({num: cpNum, type: cpType});
+        return cps;
+    }
 }
 
 
+//helper functions
 const insertIntoIndex = (arr: any[], index: number, el) => {
     return [...arr.slice(0, index), el, ...arr.slice(index)];
 }
@@ -181,6 +225,5 @@ const findStartPoint = (nodes: INode[]): PathNode => {
         start: startNode.paths[0].start
     }
 }
-
 
 export {};
