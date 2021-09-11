@@ -72,7 +72,7 @@ const calculate = (data: MapData) => {
 
         //recursive block
         dist += curPath.dist;
-        if(dist > distLimit) return;
+        if(dist > distLimit || points.length > paths.length * maxLengthMultiple) return;
 
         //final point
         if(curNode.type == 'finish' && cps.length >= cpCount){
@@ -83,12 +83,13 @@ const calculate = (data: MapData) => {
         let pointsFromHere: PathNode[] = nextpoints(curNode.paths, points);
 
         //calculate things
-        pointsFromHere.push(...findNextPoints(curNode, points));
+        pointsFromHere.push(...findNextPoints(curNode, points, cps));
         if(curNode.type == 'cp' || curNode.type == 'ring'){
             cps = addCP(curNode.cpNum, curNode.type, cps);
         }
-        if(random(0, 10000000 / points.length) == 0)
+        if(random(0, 100000000 / points.length) == 0){
             postMessage({type: 'progress', data: getPercentage(order, points)});
+        }
 
         pointsFromHere = filterNextPoints(pointsFromHere);
         
@@ -127,7 +128,7 @@ const calculate = (data: MapData) => {
         });
     }
 
-    function findNextPoints(curNode: calcNode, curPoints: PathNode[]) {
+    function findNextPoints(curNode: calcNode, curPoints: PathNode[], cps: Route['cps']) {
         const curPoint = curPoints[curPoints.length -1];
         const nextPoints: PathNode[] = [];
         if(curNode.type == 'cp' || curNode.type == 'ring'){
@@ -136,7 +137,7 @@ const calculate = (data: MapData) => {
             if(settings.turnAround && pathRepetition < 3)
                 nextPoints.push({index: curPoint.index, start: !curPoint.start});
             //ring respawn
-            if(settings.ringRespawn && curNode.type == 'ring'){
+            if(settings.ringRespawn && curNode.type == 'ring' && !cps.some(cp => cp.num == curNode.cpNum)){
                 nextPoints.push(...getPointsFromRingRespawn(curPoints));
             }
         }
