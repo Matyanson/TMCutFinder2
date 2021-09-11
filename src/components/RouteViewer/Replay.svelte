@@ -9,7 +9,7 @@
     </div>
     <div class="display">
         <DisplayTransformer>
-            <Display bind:route bind:percentage={anim.percentage} />
+            <Display bind:route bind:percentage={anim.percentage} bind:loading />
         </DisplayTransformer>
     </div>
 </div>
@@ -20,6 +20,7 @@
     import Display from "./Display.svelte";
 
     export let route: Route;
+    export let loading: boolean;
     
     let interval;
     const anim = {

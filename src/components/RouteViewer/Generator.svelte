@@ -29,6 +29,7 @@ let selected: number;
 let progress: number = 0;
 
 export let route: Route = null;
+export let loading: boolean = true;
 
 $: {
     routes;
@@ -70,9 +71,13 @@ const onMessage = (e) => {
         case 'finish':
             routes = mess.data;
             resetWorker();
+            loading = false;
             break;
         case 'progress':
             progress = mess.data;
+            break;
+        case 'incomplete':
+            route = mess.data;
             break;
         default:
             console.log(mess.type, mess.data);

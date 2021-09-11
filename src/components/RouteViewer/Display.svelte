@@ -2,7 +2,7 @@
     {#if routePoints.length > 0}
     {#each routePoints as points}
     <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <polyline 
+        <polyline class:loading
         vector-effect="non-scaling-stroke"
         points={pointsToPath(points, aspect_ratio)}
         />
@@ -25,6 +25,7 @@ import { getDist, lerpPoint, pointsToDist, pointsToPath } from "src/utils/functi
 import { onMount } from "svelte";
 
 export let route: Route;
+export let loading: boolean;
 export let percentage = 0;
 let routePoints: Coords[][];
 $: routePoints = mergePoints(route.points) ?? [];
@@ -125,6 +126,9 @@ const getPercentagePoint = (percentage: number, coords: Coords[]): Coords => {
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke: #ececec75;
+    }
+    polyline.loading{
+        stroke: #d4101075;
     }
     svg circle {
         stroke-width: 3px;

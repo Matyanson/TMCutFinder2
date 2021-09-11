@@ -1,10 +1,10 @@
 <div class="generator">
     <div class="settings">
-        <Generator bind:route />
+        <Generator bind:route bind:loading />
         <KeyBtn key=' ' on={$toolIndex == 3} onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
     </div>
     <div class="display">
-        <Replay bind:route />
+        <Replay bind:route bind:loading/>
     </div>
 </div>
 
@@ -15,6 +15,7 @@
     import Replay from "./Replay.svelte";
 
     let route = {dist:0, points: [], cps: []};
+    let loading;
     let percentage = 0;
 
 const switchCamera = (active: boolean) => {

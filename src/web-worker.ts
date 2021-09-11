@@ -89,6 +89,8 @@ const calculate = (data: MapData) => {
         }
         if(random(0, 100000000 / points.length) == 0){
             postMessage({type: 'progress', data: getPercentage(order, points)});
+            if(finalRoutes.length == 0)
+                postMessage({type: 'incomplete', data: {points: points.slice(1), dist, cps}});
         }
 
         pointsFromHere = filterNextPoints(pointsFromHere);
