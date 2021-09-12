@@ -133,13 +133,13 @@ const calculate = (data: MapData) => {
     function findNextPoints(curNode: calcNode, curPoints: PathNode[], cps: Route['cps']) {
         const curPoint = curPoints[curPoints.length -1];
         const nextPoints: PathNode[] = [];
-        if(curNode.type == 'cp' || curNode.type == 'ring'){
+        if(['cp', 'ring'].includes(curNode.type) && !cps.some(cp => cp.num == curNode.cpNum)){
             const pathRepetition = getPathRepetition(curPoints);
             //go back
             if(settings.turnAround && pathRepetition < 3)
                 nextPoints.push({index: curPoint.index, start: !curPoint.start});
             //ring respawn
-            if(settings.ringRespawn && curNode.type == 'ring' && !cps.some(cp => cp.num == curNode.cpNum)){
+            if(settings.ringRespawn && curNode.type == 'ring'){
                 nextPoints.push(...getPointsFromRingRespawn(curPoints));
             }
         }
