@@ -3,7 +3,7 @@
         number of routes to generate: <input type="number" min="1" bind:value={settings.limit} />
     </div>
     <div class="item">
-        max length multiple: <input type="range" bind:value={settings.maxLengthMultiple} min={1} max={5} /> {settings.maxLengthMultiple}
+        max length multiple: <input type="range" bind:value={settings.maxLengthMultiple} step="0.5" min={1} max={5} /> {settings.maxLengthMultiple}
     </div>
     <div class="item">
         insert only if route is shorter: <input type="checkbox" bind:checked={settings.insertOnlyShorter} />

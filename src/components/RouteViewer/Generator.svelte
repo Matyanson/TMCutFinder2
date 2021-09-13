@@ -67,6 +67,7 @@ const onMessage = (e) => {
     switch (mess.type) {
         case 'update':
             routes = mess.data;
+            loading = false;
             break;
         case 'finish':
             routes = mess.data;
