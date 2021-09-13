@@ -37,6 +37,7 @@ const calculate = (data: MapData) => {
     const cachedNodes = nodes.map((n, i) => {
         return {
             ...n,
+            paths: n.paths.reverse(),
             cpNum: checkpoints.findIndex(cp => cp.nodeIndex == i)
         }
     })
@@ -181,15 +182,20 @@ const calculate = (data: MapData) => {
 
     function isRepeating(points: PathNode[]){
         let str: string = '';
+        let pointsStr = points.slice().reverse().map(p => `${p.index}${p.start ? 's' : 'e'}`).join('');
         let count: number = 0;
         const sameHalves = (points: string) => {
             return points.substr(0, points.length / 2) == points.substr(points.length / 2);
         }
+        const isPresent = (points: string, part: string) => {
+            return points.slice(part.length - 1).includes(part);
+        }
         for(const p of points.slice().reverse()){
             str += (`${p.index}${p.start ? 's' : 'e'}`);
             count++;
-            if(count % 2 == 0 && sameHalves(str))
+            if(count % 2 == 0 && count > 3 && isPresent(pointsStr, str))
                 return true;
+            if(points.length / 2 < count) return false;
         }
         return false;
     }
