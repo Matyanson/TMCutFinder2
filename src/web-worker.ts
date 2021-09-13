@@ -72,7 +72,7 @@ const calculate = (data: MapData) => {
 
         //recursive block
         dist += curPath.dist;
-        if(dist > distLimit || points.length > paths.length * maxLengthMultiple) return;
+        if(dist > distLimit || points.length > paths.length * maxLengthMultiple || isRepeating(points)) return;
 
         //final point
         if(curNode.type == 'finish' && cps.length >= cpCount){
@@ -87,7 +87,7 @@ const calculate = (data: MapData) => {
         if(curNode.type == 'cp' || curNode.type == 'ring'){
             cps = addCP(curNode.cpNum, curNode.type, cps);
         }
-        if(random(0, 100000000 / points.length) == 0){
+        if(random(0, 10000000 / points.length) == 0){
             postMessage({type: 'progress', data: getPercentage(order, points)});
             if(finalRoutes.length == 0)
                 postMessage({type: 'incomplete', data: {points: points.slice(1), dist, cps}});
@@ -178,7 +178,21 @@ const calculate = (data: MapData) => {
         }
         return res;
     }
-    
+
+    function isRepeating(points: PathNode[]){
+        let str: string = '';
+        let count: number = 0;
+        const sameHalves = (points: string) => {
+            return points.substr(0, points.length / 2) == points.substr(points.length / 2);
+        }
+        for(const p of points.slice().reverse()){
+            str += (`${p.index}${p.start ? 's' : 'e'}`);
+            count++;
+            if(count % 2 == 0 && sameHalves(str))
+                return true;
+        }
+        return false;
+    }
     function getPointsFromRingRespawn(points: PathNode[]) {
         for(let p of points.slice().reverse()) {
             const lastCP = cachedNodes.find(n => n.type == 'cp' && 
