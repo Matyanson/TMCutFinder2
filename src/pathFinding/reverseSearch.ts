@@ -29,21 +29,21 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         }
         usedCps.push(cp.cpNum);
     }
-    // for(let cp of rings){
-    //     console.log(cp.cpNum);
-    //     const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
-    //     if(cpRoutes?.length > 0 && cpRoutes[0].points?.length > 0) {
-    //         const connected: Route[] = [];
-    //         for(let branch of cpRoutes){
-    //             const branchOutwards = reverseRoute(branch);
-    //             const connectedRoute = joinBranch(root, branchOutwards, usedCps);
-    //             connected.push(connectedRoute);
-    //         }
-    //         const shortest = connected.sort((a, b) => a.dist - b.dist)[0];
-    //         root = shortest;
-    //     }
-    //     usedCps.push(cp.cpNum);
-    // }
+    for(let cp of rings){
+        console.log(cp.cpNum);
+        const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
+        if(cpRoutes?.length > 0 && cpRoutes[0].points?.length > 0) {
+            const connected: Route[] = [];
+            for(let branch of cpRoutes){
+                const branchOutwards = reverseRoute(branch);
+                const connectedRoute = joinBranch(root, branchOutwards, usedCps);
+                connected.push(connectedRoute);
+            }
+            const shortest = connected.sort((a, b) => a.dist - b.dist)[0];
+            root = shortest;
+        }
+        usedCps.push(cp.cpNum);
+    }
 
     // let cp = all[28];
     // const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
@@ -95,7 +95,7 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         const intersectPoint = { ...branch.points[0], start: !branch.points[0].start};
         const [segment1, segment2] = splitPoints(intersectPoint, root.points);  //fix, there could me more than 1 intersection!
         const usedCpsAhead = usedCps.filter(cp => !segment1.some(p => pointToNode(p).cpNum == cp));  //cps that aren't in segment1
-        let nextCpIndex = findFirstTakenCPIndex(segment2, undefined, (cp) => !usedCpsAhead || usedCpsAhead.includes(cp.num));
+        let nextCpIndex = findFirstTakenCPIndex(segment2, usedCpsAhead);
         nextCpIndex = nextCpIndex > -1 ? nextCpIndex : segment2.length - 1;    //nextCp is the finish
 
         const leaf = branch.points[branch.points.length - 1];
@@ -143,31 +143,32 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         return n1.coords.x == n2.coords.x && n1.coords.y == n2.coords.y;
     }
     function splitPoints(intersect: PathNode, points: PathNode[]) {
-              //reversed (find lastest intersection), can undo
         const intersectIndex = points.findIndex(p => isSameNode(p, intersect));
         const firstSegment = points.slice(0, intersectIndex + 1)
         const secondSegment = points.slice(intersectIndex + 1)
         return [firstSegment, secondSegment];
     }
-    function findLastTakenCPIndex(points: PathNode[], takenCps: Route['cps'] = [], filter = (cp: Route['cps'][0]) => cp.num > -1) {
+    function findLastTakenCPIndex(points: PathNode[], selectCps: number[] = undefined, filter = (cp: Route['cps'][0]) => cp.num > -1) {
         const nodes = points.map(p => pointToNode(p));
-        takenCps =  takenCps ?? pointsToTakenCps(points);
+        const takenCps = pointsToTakenCps(points);
 
-        const lastCPNum = takenCps.slice().reverse().find(filter)?.num;     //find num of the last taken CP
+        const lastCPNum = takenCps.slice().reverse()
+        .find((cp) => (!selectCps || selectCps.includes(cp.num)) && filter(cp))?.num;     //find num of the last taken CP
         if(lastCPNum == undefined) return -1;
 
         return nodes.findIndex(n => n.cpNum == lastCPNum);
     }
-    function findFirstTakenCPIndex(points: PathNode[], takenCps: Route['cps'] = undefined, filter = (cp: Route['cps'][0]) => cp.num > -1) {
+    function findFirstTakenCPIndex(points: PathNode[], selectCps: number[] = undefined, filter = (cp: Route['cps'][0]) => cp.num > -1) {
         const nodes = points.map(p => pointToNode(p));
-        takenCps =  takenCps ?? pointsToTakenCps(points);
+        const takenCps = pointsToTakenCps(points);
                 
-        const firstCPNum = takenCps.find(filter)?.num;     //find num of the first taken CP
+        const firstCPNum = takenCps
+        .find((cp) => (!selectCps || selectCps.includes(cp.num)) && filter(cp))?.num;     //find num of the first taken CP
         if(firstCPNum == undefined) return -1;
 
         return nodes.findIndex(n => n.cpNum == firstCPNum);
     }
-    function pointsToTakenCps(points: PathNode[]){
+    function pointsToTakenCps(points: PathNode[]): Route['cps']{
         const takenCps = [];
         for(let n of points.map(p => pointToNode(p))){
             if(n.type == 'cp' || n.type == 'ring' && !takenCps.some(cp => cp.num == n.cpNum))
