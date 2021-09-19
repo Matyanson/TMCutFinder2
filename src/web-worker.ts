@@ -4,6 +4,7 @@ import type { INode, PathNode } from "./models/Node";
 import type { Path } from "./models/Path";
 import type { Route } from "./models/Route";
 import type { WorkerMessage } from "./models/WorkerMessage";
+import reverseSearch from "./pathFinding/reverseSearch";
 import { median, pointsToDist, random } from "./utils/functions";
 
 //handle different commands
@@ -20,8 +21,8 @@ onmessage = async function(e){
 }
 
 type MapData = {paths: Path[], nodes: INode[], settings: GenerateSettings};
-type calcNode = INode & {cpNum: number};
-type calcPath = Path & {dist: number, start: calcNode, end: calcNode};
+export type calcNode = INode & {cpNum: number};
+export type calcPath = Path & {dist: number, start: calcNode, end: calcNode};
 
 
 const calculate = (data: MapData) => {
@@ -49,6 +50,7 @@ const calculate = (data: MapData) => {
     const cpCount = checkpoints.length;
     const startPoint: PathNode = findStartPoint(nodes);
     const finishIndex = nodes.findIndex(n => n.type == 'finish');
+    const finishPoints = findFinishPoints(nodes);
     if(!startPoint || finishIndex < 0) return postMessage({ type: 'error', data: 'No start or finish node found'} as WorkerMessage);
     const order = getPointOrder();
     
@@ -56,10 +58,12 @@ const calculate = (data: MapData) => {
     let routesNumLimit = limit;
     let finalRoutes = [];
 
-    continueRoute({dist: 0, points: [startPoint], cps: []});
+    // continueRoute({dist: 0, points: [startPoint], cps: []});
+    // postMessage({type: "finish", data: finalRoutes});
 
-    postMessage({type: "finish", data: finalRoutes});
-    close();
+    const routes = reverseSearch(startPoint, finishPoints, cachedPaths, cachedNodes, settings);
+    postMessage({type: "update", data: routes});
+    //close();
 
 
     function continueRoute(route: Route) {
@@ -301,6 +305,16 @@ const findStartPoint = (nodes: INode[]): PathNode => {
         index: startNode.paths[0].index,
         start: startNode.paths[0].start
     }
+}
+const findFinishPoints = (nodes: INode[]): PathNode[] => {
+    const finishes = nodes.filter(n => n.type == 'finish');
+    if(!finishes) return;
+    return finishes.map(f => {
+        return {
+            index: f.paths[0].index,
+            start: f.paths[0].start
+        }
+    })
 }
 
 export {};
