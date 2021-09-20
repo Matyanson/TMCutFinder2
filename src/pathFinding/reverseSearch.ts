@@ -14,7 +14,7 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
     const rings = nodes.filter(n => n.type == 'ring');
     const usedCps: number[] = []
     
-    for(let cp of cps){
+    for(let cp of cps.slice().reverse()){
         console.log(cp.cpNum);
         const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
         if(cpRoutes?.length > 0 && cpRoutes[0].points?.length > 0) {
