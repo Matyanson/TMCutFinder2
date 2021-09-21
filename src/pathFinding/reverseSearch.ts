@@ -103,20 +103,24 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         if(branch?.points?.length < 1) return root;
 
         const [segment1, segment2] = splitPoints(root.points, intersectIndex);
+        console.log(root.points, segment1, segment2);
         const usedCpsAhead = usedCps.filter(cp => !segment1.some(p => pointToNode(p).cpNum == cp));  //filter cps that aren't in segment1
         let nextCpIndex = findFirstTakenCPIndex(segment2, usedCpsAhead);
+        console.log(nextCpIndex);
         nextCpIndex = nextCpIndex > -1 ? nextCpIndex : segment2.length - 1;    //nextCp is the finish
+        const connectBackPoint = nextCpIndex > -1 ? segment2[nextCpIndex] : root.points[root.points.length - 1];    //finish if not on segment1
 
         const leaf = branch.points[branch.points.length - 1];
         const path = paths[leaf.index];
         const leafNode = leaf.start ? path.start : path.end;
 
-        const routesBack = getRouteTo(leaf, [segment2[nextCpIndex]]);
+        console.log(segment2, nextCpIndex);
+        const routesBack = getRouteTo(leaf, [connectBackPoint]);
         if(leafNode.type == 'ring'){
             const routeBeforeRing = [...segment1, ...branch.points];
             let lastCpIndex = findLastTakenCPIndex(routeBeforeRing, undefined, (cp) => cp.type == 'cp');
             lastCpIndex = lastCpIndex > -1 ? lastCpIndex : 0;    //lastCp is the start
-            const routesFromLastCp = getRouteTo(routeBeforeRing[lastCpIndex], [segment2[nextCpIndex]]);
+            const routesFromLastCp = getRouteTo(routeBeforeRing[lastCpIndex], [connectBackPoint]);
             routesBack.push(...routesFromLastCp);
         }
         if(routesBack.length < 1) return;
