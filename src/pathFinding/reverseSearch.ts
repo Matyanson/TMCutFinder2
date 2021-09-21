@@ -112,13 +112,8 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         }
         if(routesBack.length < 1) return;
         const shortestRouteBack = routesBack.sort((a, b) => a.dist - b.dist)[0];
-        const routePoints = [...segment1, ...branch.points, ...shortestRouteBack.points];
-        if(shortestRouteBack.points.length > 0){
-            const segment3 = segment2.slice(nextCpIndex + 1);
-            routePoints.push(...segment3);
-        } else {
-            routePoints.push(...segment2);
-        }
+        const segment3 = segment2.slice(nextCpIndex + 1);
+        const routePoints = [...segment1, ...branch.points, ...shortestRouteBack.points, ...segment3];
         return pointsToRoute(routePoints);
     }
     function mergeRoutes(...routes: Route[]): Route {
