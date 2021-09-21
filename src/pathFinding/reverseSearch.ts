@@ -1,28 +1,57 @@
 import type { GenerateSettings } from "src/models/GenerateSettings";
 import type { PathNode } from "src/models/Node";
 import type { Route } from "src/models/Route";
+import { random } from "src/utils/functions";
 import type { calcNode, calcPath } from "src/web-worker";
 
-export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes: calcNode[], settings: GenerateSettings, onUpdate: ()=>void = ()=>{}): Route[] => {
+export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes: calcNode[], settings: GenerateSettings, onUpdate: (r:Route[])=>void = ()=>{}): Route[] => {
 
-    const rootRoutes = getRouteTo(start, finishes);
-    let root = rootRoutes.sort((a, b) => a.dist - b.dist)[0];
-    const finalRoutes: Route[] = [];
+    let finalRoutes: Route[] = [];
 
-    const all = nodes.filter(n => n.cpNum > -1);
     const cps = nodes.filter(n => n.type == 'cp');
     const rings = nodes.filter(n => n.type == 'ring');
+
     const usedCps: number[] = []
-    
-    for(let cp of cps.slice().reverse()){
-        console.log(cp.cpNum);
-        root = connectCPToRoot(root, cp, usedCps);
-        usedCps.push(cp.cpNum);
+    const usedCombinations: {[key: string]: boolean} = {}
+    let randomRepetition = 0;
+
+    while(randomRepetition < 5){
+        const rootRoutes = getRouteTo(start, finishes);
+        let root = rootRoutes.sort((a, b) => a.dist - b.dist)[0];
+
+        let shuffle = randomShuffle(cps.length);
+        while(usedCombinations[shuffle.toString()]){
+            shuffle = randomShuffle(cps.length);
+            randomRepetition++;
+        }
+        usedCombinations[shuffle.toString()] = true;
+        
+        for(let cp of shuffle.map(i => cps[i])){
+            root = connectCPToRoot(root, cp, usedCps);
+            usedCps.push(cp.cpNum);
+        }
+        shuffle = randomShuffle(rings.length);
+        for(let cp of shuffle.map(i => rings[i])){
+            root = connectCPToRoot(root, cp, usedCps);
+            usedCps.push(cp.cpNum);
+        }
+        finalRoutes.push(root);
+        finalRoutes = finalRoutes.slice(0, settings.limit + 1).sort((a, b) => a.dist - b.dist);
+        onUpdate(finalRoutes);
     }
-    for(let cp of rings){
-        console.log(cp.cpNum);
-        root = connectCPToRoot(root, cp, usedCps);
-        usedCps.push(cp.cpNum);
+
+    return finalRoutes;
+
+    function randomShuffle(length: number) {
+        const res: number[] = [];
+        for (let i = 0; i < length; i++) {
+            let n;
+            do {
+                n = random(0, length);
+            } while(res.includes(n))
+            res.push(n);
+        }
+        return res;
     }
 
     function connectCPToRoot(root: Route, cp: calcNode, usedCps: number[]) {
@@ -43,16 +72,6 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         }
         return root;
     }
-
-    // let cp = all[28];
-    // const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
-    // const branch = cpRoutes.sort((a, b) => a.dist - b.dist)[0];
-    // if(branch?.points?.length > 0){
-    //     const branchOutwards = reverseRoute(branch);
-    //     root = joinBranch(root, branchOutwards);
-    // }
-
-    return [root ?? {cps:[], points:[], dist:0}];
 
     function getRouteTo(from: PathNode, to: PathNode[], reverse: boolean = false): Route[] {
         const destination = to.map(x => getAllPointsFrom(x)).flat();

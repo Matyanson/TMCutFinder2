@@ -61,8 +61,12 @@ const calculate = (data: MapData) => {
     // continueRoute({dist: 0, points: [startPoint], cps: []});
     // postMessage({type: "finish", data: finalRoutes});
 
-    const routes = reverseSearch(startPoint, finishPoints, cachedPaths, cachedNodes, settings);
-    postMessage({type: "update", data: routes});
+    const routes = reverseSearch(startPoint, finishPoints, cachedPaths, cachedNodes, settings,
+        (r)=>{
+            postMessage({type: "update", data: r});
+        }
+    );
+    postMessage({type: "finish", data: routes});
     //close();
 
 
