@@ -21,8 +21,13 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
             const connected: Route[] = [];
             for(let branch of cpRoutes){
                 const branchOutwards = reverseRoute(branch);
-                const connectedRoute = joinBranch(root, branchOutwards, usedCps);
-                connected.push(connectedRoute);
+                const intersectPoint = { ...branchOutwards.points[0], start: !branchOutwards.points[0].start};
+                const intersections = findPointIndexes(root.points, intersectPoint);
+                console.log('int', intersections.length);
+                for(let index of intersections){
+                    const connectedRoute = joinBranch(root, branchOutwards, index, usedCps);
+                    connected.push(connectedRoute);
+                }
             }
             const shortest = connected.sort((a, b) => a.dist - b.dist)[0];
             root = shortest;
@@ -36,8 +41,13 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
             const connected: Route[] = [];
             for(let branch of cpRoutes){
                 const branchOutwards = reverseRoute(branch);
-                const connectedRoute = joinBranch(root, branchOutwards, usedCps);
-                connected.push(connectedRoute);
+                const intersectPoint = { ...branchOutwards.points[0], start: !branchOutwards.points[0].start};
+                const intersections = findPointIndexes(root.points, intersectPoint);
+                console.log('int', intersections.length);
+                for(let index of intersections){
+                    const connectedRoute = joinBranch(root, branchOutwards, index, usedCps);
+                    connected.push(connectedRoute);
+                }
             }
             const shortest = connected.sort((a, b) => a.dist - b.dist)[0];
             root = shortest;
@@ -89,12 +99,11 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
             }
         }
     }
-    function joinBranch(root: Route, branch: Route, usedCps: number[] = undefined){
-        if(branch?.points?.length < 1) return {dist:0,points:[],cps:[]};
+    function joinBranch(root: Route, branch: Route, intersectIndex: number, usedCps: number[] = undefined){
+        if(branch?.points?.length < 1) return root;
 
-        const intersectPoint = { ...branch.points[0], start: !branch.points[0].start};
-        const [segment1, segment2] = splitPoints(intersectPoint, root.points);  //fix, there could me more than 1 intersection!
-        const usedCpsAhead = usedCps.filter(cp => !segment1.some(p => pointToNode(p).cpNum == cp));  //cps that aren't in segment1
+        const [segment1, segment2] = splitPoints(root.points, intersectIndex);
+        const usedCpsAhead = usedCps.filter(cp => !segment1.some(p => pointToNode(p).cpNum == cp));  //filter cps that aren't in segment1
         let nextCpIndex = findFirstTakenCPIndex(segment2, usedCpsAhead);
         nextCpIndex = nextCpIndex > -1 ? nextCpIndex : segment2.length - 1;    //nextCp is the finish
 
@@ -136,11 +145,18 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         const n2 = pointToNode(p2);
         return n1.coords.x == n2.coords.x && n1.coords.y == n2.coords.y;
     }
-    function splitPoints(intersect: PathNode, points: PathNode[]) {
-        const revIndex = points.slice().reverse().findIndex(p => isSameNode(p, intersect));
-        const intersectIndex = points.length - 1 - revIndex;
-        const firstSegment = points.slice(0, intersectIndex + 1);
-        const secondSegment = points.slice(intersectIndex + 1);
+    function findPointIndexes(points: PathNode[], targetPoint: PathNode){
+        const indexes: number[] = [];
+        for(let i = 0; i < points.length; i++){
+            const p = points[i];
+            if(isSameNode(p, targetPoint))
+                indexes.push(i);
+        }
+        return indexes;
+    }
+    function splitPoints(points: PathNode[], index: number) {
+        const firstSegment = points.slice(0, index + 1);
+        const secondSegment = points.slice(index + 1);
         return [firstSegment, secondSegment];
     }
     function findLastTakenCPIndex(points: PathNode[], selectCps: number[] = undefined, filter = (cp: Route['cps'][0]) => cp.num > -1) {
