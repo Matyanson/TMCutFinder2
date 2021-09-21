@@ -5,6 +5,7 @@
             <div>{cp.num}</div>
         {/each}
     </div>
+    <div class="copy" on:click={copyRoute}>copy</div>
 </div>
 
 <script lang="ts">
@@ -12,6 +13,10 @@
     export let route: Route;
     export let selected: boolean;
 
+    const copyRoute = () => {
+        const routeText = route.points.map(p => `${p.index},${p.start ? 'S': 'E'};`).reduce((total, cur) => total + cur);
+        navigator.clipboard.writeText(routeText);
+    }
 </script>
 
 <style>
@@ -29,5 +34,15 @@
     .cps{
         display: flex;
         flex-flow: row;
+    }
+    .copy{
+        background: #1675ac;
+        padding: 2px;
+        margin: 2px;
+        border-radius: 3px;
+        text-align: center;
+    }
+    .copy:hover{
+        background: #1a85c4;
     }
 </style>
