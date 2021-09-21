@@ -16,26 +16,16 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
     
     for(let cp of cps.slice().reverse()){
         console.log(cp.cpNum);
-        const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
-        if(cpRoutes?.length > 0 && cpRoutes[0].points?.length > 0) {
-            const connected: Route[] = [];
-            for(let branch of cpRoutes){
-                const branchOutwards = reverseRoute(branch);
-                const intersectPoint = { ...branchOutwards.points[0], start: !branchOutwards.points[0].start};
-                const intersections = findPointIndexes(root.points, intersectPoint);
-                console.log('int', intersections.length);
-                for(let index of intersections){
-                    const connectedRoute = joinBranch(root, branchOutwards, index, usedCps);
-                    connected.push(connectedRoute);
-                }
-            }
-            const shortest = connected.sort((a, b) => a.dist - b.dist)[0];
-            root = shortest;
-        }
+        root = connectCPToRoot(root, cp, usedCps);
         usedCps.push(cp.cpNum);
     }
     for(let cp of rings){
         console.log(cp.cpNum);
+        root = connectCPToRoot(root, cp, usedCps);
+        usedCps.push(cp.cpNum);
+    }
+
+    function connectCPToRoot(root: Route, cp: calcNode, usedCps: number[]) {
         const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
         if(cpRoutes?.length > 0 && cpRoutes[0].points?.length > 0) {
             const connected: Route[] = [];
@@ -43,16 +33,15 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
                 const branchOutwards = reverseRoute(branch);
                 const intersectPoint = { ...branchOutwards.points[0], start: !branchOutwards.points[0].start};
                 const intersections = findPointIndexes(root.points, intersectPoint);
-                console.log('int', intersections.length);
                 for(let index of intersections){
                     const connectedRoute = joinBranch(root, branchOutwards, index, usedCps);
                     connected.push(connectedRoute);
                 }
             }
             const shortest = connected.sort((a, b) => a.dist - b.dist)[0];
-            root = shortest;
+            return shortest;
         }
-        usedCps.push(cp.cpNum);
+        return root;
     }
 
     // let cp = all[28];
@@ -103,10 +92,8 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         if(branch?.points?.length < 1) return root;
 
         const [segment1, segment2] = splitPoints(root.points, intersectIndex);
-        console.log(root.points, segment1, segment2);
         const usedCpsAhead = usedCps.filter(cp => !segment1.some(p => pointToNode(p).cpNum == cp));  //filter cps that aren't in segment1
         let nextCpIndex = findFirstTakenCPIndex(segment2, usedCpsAhead);
-        console.log(nextCpIndex);
         nextCpIndex = nextCpIndex > -1 ? nextCpIndex : segment2.length - 1;    //nextCp is the finish
         const connectBackPoint = nextCpIndex > -1 ? segment2[nextCpIndex] : root.points[root.points.length - 1];    //finish if not on segment1
 
@@ -114,7 +101,6 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         const path = paths[leaf.index];
         const leafNode = leaf.start ? path.start : path.end;
 
-        console.log(segment2, nextCpIndex);
         const routesBack = getRouteTo(leaf, [connectBackPoint]);
         if(leafNode.type == 'ring'){
             const routeBeforeRing = [...segment1, ...branch.points];
