@@ -4,12 +4,16 @@ import type { Route } from "src/models/Route";
 import { random } from "src/utils/functions";
 import type { calcNode, calcPath } from "src/web-worker";
 
-export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes: calcNode[], settings: GenerateSettings, onUpdate: (r:Route[])=>void = ()=>{}): Route[] => {
+export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes: calcNode[], settings: GenerateSettings, 
+        onUpdate: (r:Route[])=>void = ()=>{},
+        onProgress: (percentage: number)=>void = ()=>{}
+    ): Route[] => {
 
     let finalRoutes: Route[] = [];
 
     const cps = nodes.filter(n => n.type == 'cp');
     const rings = nodes.filter(n => n.type == 'ring');
+    const cpCount = cps.length + rings.length;
 
     const usedCps: number[] = []
     const usedCombinations: {[key: string]: boolean} = {}
@@ -26,18 +30,27 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         }
         usedCombinations[shuffle.toString()] = true;
         
-        for(let cp of shuffle.map(i => cps[i])){
+        for(let i = 0; i < shuffle.length; i++){
+            let cp = cps[shuffle[i]];
             root = connectCPToRoot(root, cp, usedCps);
             usedCps.push(cp.cpNum);
+            
+            const percentage = 100 * i / cpCount;
+            onProgress(percentage);
         }
         shuffle = randomShuffle(rings.length);
-        for(let cp of shuffle.map(i => rings[i])){
+        for(let i = 0; i < shuffle.length; i++){
+            let cp = rings[shuffle[i]];
             root = connectCPToRoot(root, cp, usedCps);
             usedCps.push(cp.cpNum);
+
+            const percentage = 100 * (i + cps.length) / cpCount;
+            onProgress(percentage);
         }
         finalRoutes.push(root);
         finalRoutes = finalRoutes.slice(0, settings.limit + 1).sort((a, b) => a.dist - b.dist);
         onUpdate(finalRoutes);
+        console.log('final Route');
     }
 
     return finalRoutes;

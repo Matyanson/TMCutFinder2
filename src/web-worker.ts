@@ -62,8 +62,11 @@ const calculate = (data: MapData) => {
     // postMessage({type: "finish", data: finalRoutes});
 
     const routes = reverseSearch(startPoint, finishPoints, cachedPaths, cachedNodes, settings,
-        (r)=>{
+        (r) => {
             postMessage({type: "update", data: r});
+        },
+        (p) => {
+            postMessage({type: 'progress', data: p})
         }
     );
     postMessage({type: "finish", data: routes});
