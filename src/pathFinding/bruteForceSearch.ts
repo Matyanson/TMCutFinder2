@@ -57,7 +57,7 @@ export default x = (start, finishes, paths, nodes, settings,
             cps = addCP(curNode.cpNum, curNode.type, cps);
         }
         if(random(0, 10000000 / points.length) == 0){
-            postMessage({type: 'progress', data: getPercentage(order, points)});
+            onProgress(getPercentage(order, points));
             if(finalRoutes.length == 0)
                 postMessage({type: 'incomplete', data: {points: points.slice(1), dist, cps}});
         }
@@ -78,7 +78,7 @@ export default x = (start, finishes, paths, nodes, settings,
             if( !finalRoutes[i] || dist < finalRoutes[i].dist) { //if is shorter or last place
                 //insert
                 finalRoutes = insertIntoIndex(finalRoutes, i, route);
-                postMessage({type: "update", data: finalRoutes});
+                onUpdate(finalRoutes);
                 break;
             }
         }
