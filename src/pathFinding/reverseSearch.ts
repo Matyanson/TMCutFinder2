@@ -1,11 +1,12 @@
-import type { GenerateSettings } from "src/models/GenerateSettings";
 import type { PathNode } from "src/models/Node";
 import type { Route } from "src/models/Route";
+import type SearchAlghorithm from "src/models/SearchAlghoritm";
 import { routeToStr } from "src/utils/data";
 import { random } from "src/utils/functions";
 import type { calcNode, calcPath } from "src/web-worker";
 
-export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes: calcNode[], settings: GenerateSettings, 
+let x: SearchAlghorithm
+export default x = (start, finishes, paths, nodes, settings,
         onUpdate: (r:Route[])=>void = ()=>{},
         onProgress: (percentage: number)=>void = ()=>{}
     ): Route[] => {
@@ -144,7 +145,7 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
         const leafNode = leaf.start ? path.start : path.end;
 
         const routesBack = getRouteTo(leaf, [connectBackPoint]);
-        if(leafNode.type == 'ring'){
+        if(leafNode.type == 'ring' && settings.ringRespawn){
             const routeBeforeRing = [...segment1, ...branch.points];
             let lastCpIndex = findLastTakenCPIndex(routeBeforeRing, undefined, (cp) => cp.type == 'cp');
             lastCpIndex = lastCpIndex > -1 ? lastCpIndex : 0;    //lastCp is the start
