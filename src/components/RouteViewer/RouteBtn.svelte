@@ -10,11 +10,12 @@
 
 <script lang="ts">
     import type { Route } from "src/models/Route";
+    import { routeToStr } from "src/utils/data";
     export let route: Route;
     export let selected: boolean;
 
     const copyRoute = () => {
-        const routeText = route.points.map(p => `${p.index},${p.start ? 'S': 'E'};`).reduce((total, cur) => total + cur);
+        const routeText = routeToStr(route);
         navigator.clipboard.writeText(routeText);
     }
 </script>
