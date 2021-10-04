@@ -1,6 +1,7 @@
 import type { GenerateSettings } from "src/models/GenerateSettings";
 import type { PathNode } from "src/models/Node";
 import type { Route } from "src/models/Route";
+import { routeToStr } from "src/utils/data";
 import { random } from "src/utils/functions";
 import type { calcNode, calcPath } from "src/web-worker";
 
@@ -15,11 +16,12 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
     const rings = nodes.filter(n => n.type == 'ring');
     const cpCount = cps.length + rings.length;
 
-    const usedCps: number[] = []
-    const usedCombinations: {[key: string]: boolean} = {}
+    const usedCps: number[] = [];
+    const usedCombinations: {[key: string]: boolean} = {};
+    const usedRoutes: {[key: string]: boolean} = {};
     let randomRepetition = 0;
 
-    while(randomRepetition < 5){
+    while(randomRepetition < 30){
         const rootRoutes = getRouteTo(start, finishes);
         let root = rootRoutes.sort((a, b) => a.dist - b.dist)[0];
 
@@ -47,13 +49,21 @@ export default (start: PathNode, finishes: PathNode[], paths: calcPath[], nodes:
             const percentage = 100 * (i + cps.length) / cpCount;
             onProgress(percentage);
         }
-        finalRoutes.push(root);
-        finalRoutes = finalRoutes.slice(0, settings.limit + 1).sort((a, b) => a.dist - b.dist);
-        onUpdate(finalRoutes);
-        console.log('final Route');
+
+        addRoute(root);
     }
 
     return finalRoutes;
+
+    function addRoute(r: Route){
+        const routeStr = routeToStr(r);
+        if(!usedRoutes[routeStr]){
+            finalRoutes.push(r);
+            finalRoutes = finalRoutes.slice(0, settings.limit + 1).sort((a, b) => a.dist - b.dist);
+            onUpdate(finalRoutes);
+            usedRoutes[routeStr] = true;
+        }
+    }
 
     function randomShuffle(length: number) {
         const res: number[] = [];
