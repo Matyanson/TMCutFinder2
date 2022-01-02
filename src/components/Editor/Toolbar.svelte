@@ -1,12 +1,12 @@
 <div class="toolbar">
     <div style="color:white">{$selectedPath > -1 ? $selectedPath : ($selectedNode > -1 ? $selectedNode : -1)}</div>
-    <div class="tools">
+    <div class="tools row">
         <KeyBtn key='q' on={$toolIndex == 0}  onSwitch={() => $toolIndex = 0}>Select</KeyBtn>
         <KeyBtn key='w' on={$toolIndex == 1} onSwitch={() => $toolIndex = 1}>Path</KeyBtn>
         <KeyBtn key='e' on={$toolIndex == 2} onSwitch={() => $toolIndex = 2}>Node</KeyBtn>
         <KeyBtn key=' ' on={$toolIndex == 3} onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
     </div>
-    <div class="options">
+    <div class="options row">
     {#if $toolIndex == 1}
         <KeyBtn key='a' onPress={() => paths.addNew()}>Add</KeyBtn>
         <KeyBtn key='s' on={$pathType == 'normal'} onPress={() => $pathType = 'normal'}>Normal</KeyBtn>
@@ -54,5 +54,9 @@ import KeyBtn from '../KeyBtn.svelte';
     }
     .tools{
         margin-right: 50px;
+    }
+    .row {
+        display: flex;
+        flex-flow: row;
     }
 </style>
