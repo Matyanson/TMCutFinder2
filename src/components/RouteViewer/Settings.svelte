@@ -19,9 +19,9 @@
     </div>
 </div>
 <script lang="ts">
-    import type { GenerateSettings } from "src/models/GenerateSettings";
+    import type SearchSettings from "src/models/SearchSettings";
 
-    export let settings: GenerateSettings = {
+    export let settings: SearchSettings = {
         limit: 10,
         maxLengthMultiple: 2,
         insertOnlyShorter: true,

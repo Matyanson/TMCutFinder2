@@ -1,5 +1,5 @@
 import type Coords from "./models/Coords";
-import type { GenerateSettings } from "./models/GenerateSettings";
+import type SearchSettings from "./models/SearchSettings";
 import type { INode, PathNode } from "./models/Node";
 import type { Path } from "./models/Path";
 import type { Route } from "./models/Route";
@@ -20,7 +20,7 @@ onmessage = async function(e){
     }
 }
 
-type MapData = {paths: Path[], nodes: INode[], settings: GenerateSettings};
+type MapData = {paths: Path[], nodes: INode[], settings: SearchSettings};
 export type calcNode = INode & {cpNum: number};
 export type calcPath = Path & {dist: number, start: calcNode, end: calcNode};
 

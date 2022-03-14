@@ -1,4 +1,4 @@
-export interface GenerateSettings {
+export default interface SearchSettings {
     limit: number,
     maxLengthMultiple: number,
     insertOnlyShorter: boolean,
