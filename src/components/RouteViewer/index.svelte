@@ -1,10 +1,10 @@
 <div class="generator">
     <div class="settings">
-        <Generator bind:route bind:loading />
+        <Generator />
         <KeyBtn key=' ' on={$toolIndex == 3} onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
     </div>
     <div class="display">
-        <Replay bind:route bind:loading/>
+        <Replay />
     </div>
 </div>
 
@@ -13,9 +13,17 @@
     import KeyBtn from "src/components/KeyBtn.svelte";
     import Generator from "./Generator.svelte";
     import Replay from "./Replay.svelte";
+    import { setContext } from "svelte";
+    import type ReplayContext from "./ReplayContext";
+    import { writable } from "svelte/store";
 
-    let route = {dist:0, points: [], cps: []};
-    let loading;
+
+    setContext("replay",
+        writable({
+            activeRoute: { dist: 0, points: [], cps: [] },
+            incomplete: true
+    }) as ReplayContext);
+
     let percentage = 0;
 
 const switchCamera = (active: boolean) => {

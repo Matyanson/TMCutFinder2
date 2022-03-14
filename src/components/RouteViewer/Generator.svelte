@@ -23,23 +23,24 @@
 import Settings from "./Settings.svelte";
 import myWorker from "../../web-worker?worker";
 import { nodes, paths } from "src/store";
-import type { GenerateSettings } from "src/models/GenerateSettings";
+import type SearchSettings from "src/models/SearchSettings";
 import type { WorkerMessage } from "src/models/WorkerMessage";
 import type { Route } from "src/models/Route";
 import RouteBtn from "./RouteBtn.svelte";
 import ProgressBar from "../ProgressBar.svelte";
 import { strToRoute } from "src/utils/data";
+import { getContext } from "svelte";
+import type ReplayContext from "./ReplayContext";
 
 let w: Worker;
-let settings: GenerateSettings;
+let settings: SearchSettings;
 let routes: Route[] = [];
 let manualRoutes: Route[] = [];
 let newRouteStr: string = "";
 let selected: number;
 let progress: number = 0;
 
-export let route: Route = null;
-export let loading: boolean = true;
+const data: ReplayContext = getContext("replay");
 
 $: {
     routes;
@@ -49,7 +50,8 @@ $: {
 const selectRoute = (i) => {    //negative is manual
     console.log(i);
     selected = i;
-    route = i < 0 ? manualRoutes[-i-1] : routes[i];
+    let activeRoute = i < 0 ? manualRoutes[-i-1] : routes[i];
+    $data = { activeRoute, incomplete: false };
 }
 
 const addRoute = () => {
@@ -85,18 +87,21 @@ const onMessage = (e) => {
     switch (mess.type) {
         case 'update':
             routes = mess.data;
-            loading = false;
+            $data.incomplete = false;
             break;
         case 'finish':
             routes = mess.data;
             resetWorker();
-            loading = false;
+            $data.incomplete = false;
             break;
         case 'progress':
             progress = mess.data;
             break;
         case 'incomplete':
-            route = mess.data;
+            $data = {
+                activeRoute: mess.data,
+                incomplete: true
+            };
             break;
         default:
             console.log(mess.type, mess.data);

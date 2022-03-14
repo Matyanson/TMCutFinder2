@@ -2,7 +2,7 @@
     {#if routePoints.length > 0}
     {#each routePoints as points}
     <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <polyline class:loading
+        <polyline class:loading={$data.incomplete}
         vector-effect="non-scaling-stroke"
         points={pointsToPath(points, aspect_ratio)}
         />
@@ -18,17 +18,18 @@
 <script lang="ts">
 import type Coords from "src/models/Coords";
 import type { PathNode } from "src/models/Node";
-import type { Route } from "src/models/Route";
 import { imgSrc, paths } from "src/store";
 import { sizeTracker } from "src/utils/dom";
 import { getDist, lerpPoint, pointsToDist, pointsToPath } from "src/utils/functions";
-import { onMount } from "svelte";
+import { getContext, onMount } from "svelte";
+import type ReplayContext from "./ReplayContext";
 
-export let route: Route;
-export let loading: boolean;
+
+const data: ReplayContext = getContext("replay");
+
 export let percentage = 0;
 let routePoints: Coords[][];
-$: routePoints = mergePoints(route.points) ?? [];
+$: routePoints = mergePoints($data.activeRoute.points) ?? [];
 $: car = routePoints.length > 0 ?
 getPercentagePoint2d(percentage, routePoints) :
 {x:0,y:0};
