@@ -5,8 +5,10 @@ import { routeToStr } from "src/utils/data";
 import { random } from "src/utils/functions";
 import type { calcNode, calcPath } from "src/web-worker";
 
-let x: SearchAlghorithm
-export default x = (start, finishes, paths, nodes, settings,
+const name = "reverse search";
+
+let func: SearchAlghorithm
+func = (start, finishes, paths, nodes, settings,
         onUpdate: (r:Route[])=>void = ()=>{},
         onProgress: (percentage: number)=>void = ()=>{}
     ): Route[] => {
@@ -242,4 +244,9 @@ export default x = (start, finishes, paths, nodes, settings,
     function reverseRoute(r: Route): Route {
         return {...r, points: reversePoints(r.points), cps: r.cps.reverse()};
     }
+}
+
+export default {
+    name,
+    func
 }

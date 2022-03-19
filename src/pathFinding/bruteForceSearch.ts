@@ -1,6 +1,6 @@
 import type { PathNode } from "src/models/Node";
 import type { Route } from "src/models/Route";
-import type SearchAlghorithm from "src/models/SearchAlgorithm";
+import type SearchAlgorithm from "src/models/SearchAlgorithm";
 import { median, random } from "src/utils/functions";
 import type { calcNode } from "src/web-worker";
 
@@ -15,8 +15,10 @@ const algorithmSettings: BruteSearchSettings = {
 }
 const { maxLengthMultiple, insertOnlyShorter } = algorithmSettings;
 
-let x: SearchAlghorithm;
-export default x = (start, finishes, paths, nodes, settings, 
+const name = "brute force";
+
+let func: SearchAlgorithm;
+func = (start, finishes, paths, nodes, settings, 
     onUpdate: (r:Route[])=>void = ()=>{},
     onProgress: (percentage: number)=>void = ()=>{}
 ): Route[] => {
@@ -251,4 +253,9 @@ export default x = (start, finishes, paths, nodes, settings,
     function insertIntoIndex (arr: any[], index: number, el) {
         return [...arr.slice(0, index), el, ...arr.slice(index)];
     }
+}
+
+export default {
+    name,
+    func
 }

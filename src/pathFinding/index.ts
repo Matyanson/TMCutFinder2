@@ -3,7 +3,10 @@ import reverseSearch from "./reverseSearch";
 
 
 const algorithms = [
-    { name: "reverse search", func: reverseSearch },
-    { name: "brute force", func: bruteForceSearch },
+    bruteForceSearch,
+    reverseSearch
 ]
+
+export const algorithmNames = algorithms.map(a => a.name);
+
 export default algorithms;

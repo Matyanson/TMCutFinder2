@@ -1,8 +1,8 @@
 <div class="generator">
     choose the algorithm
     <select bind:value={selectedAlgorithmIndex}>
-        {#each Object.entries(searchAlgorithms) as [key, value]}
-            <option value={key}>{value.name}</option>
+        {#each algorithmNames as name, i}
+            <option value={i}>{name}</option>
         {/each}
     </select>
     <Settings bind:settings />
@@ -32,8 +32,7 @@ import ProgressBar from "../ProgressBar.svelte";
 import { strToRoute } from "src/utils/data";
 import { getContext } from "svelte";
 import type ReplayContext from "./ReplayContext";
-import searchAlgorithms from "../../pathFinding/index";
-import algorithms from "../../pathFinding/index";
+import { algorithmNames } from "../../pathFinding/index";
 
 let w: Worker;
 let settings: SearchSettings;
