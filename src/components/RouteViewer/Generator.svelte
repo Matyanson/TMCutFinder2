@@ -34,7 +34,7 @@ import type ReplayContext from "./ReplayContext";
 
 let w: Worker;
 let settings: SearchSettings;
-let routes: Route[] = [];
+let generatedRoutes: Route[] = [];
 let manualRoutes: Route[] = [];
 let newRouteStr: string = "";
 let selected: number;
@@ -43,14 +43,15 @@ let progress: number = 0;
 const data: ReplayContext = getContext("replay");
 
 $: {
-    routes;
+    generatedRoutes;
     selected = -1;
 }
+let routes: Route[];
+$: routes = [...manualRoutes, ...generatedRoutes];
 
-const selectRoute = (i) => {    //negative is manual
-    console.log(i);
+const selectRoute = (i) => {
     selected = i;
-    let activeRoute = i < 0 ? manualRoutes[-i-1] : routes[i];
+    let activeRoute = routes[i];
     $data = { activeRoute, incomplete: false };
 }
 
@@ -86,11 +87,11 @@ const onMessage = (e) => {
     const mess: WorkerMessage = e.data;
     switch (mess.type) {
         case 'update':
-            routes = mess.data;
+            generatedRoutes = mess.data;
             $data.incomplete = false;
             break;
         case 'finish':
-            routes = mess.data;
+            generatedRoutes = mess.data;
             resetWorker();
             $data.incomplete = false;
             break;
