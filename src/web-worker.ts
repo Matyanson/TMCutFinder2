@@ -6,6 +6,9 @@ import type { Route } from "./models/Route";
 import type { WorkerMessage } from "./models/WorkerMessage";
 import reverseSearch from "./pathFinding/reverseSearch";
 import { median, pointsToDist, random } from "./utils/functions";
+import bruteForceSearch from "./pathFinding/bruteForceSearch";
+import type SearchAlghorithm from "./models/SearchAlgorithm";
+import algorithms from "./pathFinding/index";
 
 //handle different commands
 onmessage = async function(e){
@@ -20,13 +23,13 @@ onmessage = async function(e){
     }
 }
 
-type MapData = {paths: Path[], nodes: INode[], settings: SearchSettings};
+type MapData = { paths: Path[], nodes: INode[], settings: SearchSettings, funcIndex: number };
 export type calcNode = INode & {cpNum: number};
 export type calcPath = Path & {dist: number, start: calcNode, end: calcNode};
 
 
 const calculate = (data: MapData) => {
-    const {paths, nodes, settings} = data;
+    const {paths, nodes, settings, funcIndex} = data;
 
     //cache data into the objects
     const checkpoints = nodes
@@ -50,7 +53,7 @@ const calculate = (data: MapData) => {
     const finishPoints = findFinishPoints(nodes);
     if(!startPoint || finishIndex < 0) return postMessage({ type: 'error', data: 'No start or finish node found'} as WorkerMessage);
 
-    const searchProps = [startPoint, finishPoints, cachedPaths, cachedNodes, settings,
+    const searchProps = [ startPoint, finishPoints, cachedPaths, cachedNodes, settings,
         (r) => {
             postMessage({type: "update", data: r});
         },
@@ -59,7 +62,7 @@ const calculate = (data: MapData) => {
         }
     ] as const;
 
-    const routes = reverseSearch(...searchProps);
+    const routes = algorithms[funcIndex].func(...searchProps);
     postMessage({type: "finish", data: routes});
     //close();
 }

@@ -1,17 +1,18 @@
 <div class="generator">
+    choose the algorithm
+    <select bind:value={selectedAlgorithmIndex}>
+        {#each Object.entries(searchAlgorithms) as [key, value]}
+            <option value={key}>{value.name}</option>
+        {/each}
+    </select>
     <Settings bind:settings />
     <button on:click={startWorker}>Re-route</button>
     <button on:click={resetWorker}>Reset</button>
     {#if w}
-    <ProgressBar bind:progress />
+        <ProgressBar bind:progress />
     {/if}
     add new route:
     <input type="text" bind:value={newRouteStr} /> <button on:click={addRoute} >add</button>
-    <div class="routes">
-    {#each manualRoutes as r, i}
-        <RouteBtn selected={i == -(selected - 1)} route={r} on:click={() => selectRoute(-(i+1))} />
-    {/each}
-    </div>
     <div class="routes">
     {#each routes as r, i}
         <RouteBtn selected={i == selected} route={r} on:click={() => selectRoute(i)} />
@@ -31,6 +32,8 @@ import ProgressBar from "../ProgressBar.svelte";
 import { strToRoute } from "src/utils/data";
 import { getContext } from "svelte";
 import type ReplayContext from "./ReplayContext";
+import searchAlgorithms from "../../pathFinding/index";
+import algorithms from "../../pathFinding/index";
 
 let w: Worker;
 let settings: SearchSettings;
@@ -39,6 +42,7 @@ let manualRoutes: Route[] = [];
 let newRouteStr: string = "";
 let selected: number;
 let progress: number = 0;
+let selectedAlgorithmIndex: number;
 
 const data: ReplayContext = getContext("replay");
 
@@ -72,7 +76,8 @@ const startWorker = () => {
         data: {
             paths: $paths,
             nodes: $nodes,
-            settings
+            settings,
+            funcIndex: selectedAlgorithmIndex
         }
     });
     w.onmessage = onMessage;

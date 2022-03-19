@@ -1,6 +1,6 @@
 import type { PathNode } from "src/models/Node";
 import type { Route } from "src/models/Route";
-import type SearchAlghorithm from "src/models/SearchAlghoritm";
+import type SearchAlghorithm from "src/models/SearchAlgorithm";
 import { routeToStr } from "src/utils/data";
 import { random } from "src/utils/functions";
 import type { calcNode, calcPath } from "src/web-worker";

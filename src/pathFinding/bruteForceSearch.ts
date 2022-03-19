@@ -1,8 +1,19 @@
 import type { PathNode } from "src/models/Node";
 import type { Route } from "src/models/Route";
-import type SearchAlghorithm from "src/models/SearchAlghoritm"
+import type SearchAlghorithm from "src/models/SearchAlgorithm";
 import { median, random } from "src/utils/functions";
 import type { calcNode } from "src/web-worker";
+
+type BruteSearchSettings = {
+    maxLengthMultiple: number,
+    insertOnlyShorter: boolean,
+}
+
+const algorithmSettings: BruteSearchSettings = {
+    maxLengthMultiple: 10,
+    insertOnlyShorter: true
+}
+const { maxLengthMultiple, insertOnlyShorter } = algorithmSettings;
 
 let x: SearchAlghorithm;
 export default x = (start, finishes, paths, nodes, settings, 
@@ -17,7 +28,7 @@ export default x = (start, finishes, paths, nodes, settings,
     .filter(n => n.type == 'cp' || n.type == 'ring');
     const totalDist = paths.map(p => p.dist).reduce((total, cur) => total+cur);
     const cpCount = checkpoints.length;
-    const {limit, maxLengthMultiple} = settings;
+    const { limit } = settings;
     
     let distLimit = totalDist * maxLengthMultiple;
     let routesNumLimit = limit;
@@ -86,7 +97,7 @@ export default x = (start, finishes, paths, nodes, settings,
         finalRoutes = finalRoutes.slice(0, routesNumLimit);
 
         //set the distLimit to worst route
-        if(settings.insertOnlyShorter || finalRoutes.length === routesNumLimit)
+        if(insertOnlyShorter || finalRoutes.length === routesNumLimit)
             distLimit = finalRoutes[finalRoutes.length-1].dist;
     }
 
@@ -237,7 +248,7 @@ export default x = (start, finishes, paths, nodes, settings,
         }
     }
 
-    const insertIntoIndex = (arr: any[], index: number, el) => {
+    function insertIntoIndex (arr: any[], index: number, el) {
         return [...arr.slice(0, index), el, ...arr.slice(index)];
     }
 }
