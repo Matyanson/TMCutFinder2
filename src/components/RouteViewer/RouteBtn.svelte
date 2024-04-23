@@ -2,7 +2,7 @@
     <div class="dist">{Math.floor(route.dist)}</div>
     <div class="cps">
         {#each route.cps as cp}
-            <div>{cp.num}</div>
+            <div>{cp.num}&nbsp;</div>
         {/each}
     </div>
     <div class="copy" on:click={copyRoute}>copy</div>
@@ -35,6 +35,7 @@
     .cps{
         display: flex;
         flex-flow: row;
+        user-select: text;
     }
     .copy{
         background: #1675ac;
