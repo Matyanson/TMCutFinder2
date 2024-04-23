@@ -34,9 +34,11 @@
 <script lang="ts">
 import type Coords from "src/models/Coords";
 import type { INode } from "src/models/Node";
+	import type { Route } from "src/models/Route";
 import { nodes, nodeType, paths, selectedNode, selectedPath, toolIndex } from "src/store";
+	import { routeToStr } from "src/utils/data";
 import { sizeTracker } from "src/utils/dom";
-import { getDist, nearestIndex, pointsToPath } from "src/utils/functions";
+import { getDist, nearestIndex, pointsToDist, pointsToPath } from "src/utils/functions";
 import { getContext, onMount } from "svelte";
 
     const context: any = getContext('canvas');
@@ -60,6 +62,9 @@ import { getContext, onMount } from "svelte";
     let hoverNode = -1;
     let lastPoint: Coords = {x: 0, y: 0};
     let fakeNode: Coords = {x: 0, y: 0};
+
+    //other
+    let customRoute: Route = { points: [], cps: [], dist: 0 };
 
     let cps: INode[];
     $: cps = $nodes.filter(n => n.type == 'cp' || n.type == 'ring');
@@ -115,6 +120,28 @@ import { getContext, onMount } from "svelte";
                 }
                 break;
             case 3:
+                break;
+            case 4:
+                console.log(hoverPath);
+                if(hoverPath == null) break;
+                $selectedPath = hoverPath;
+                // determine which end
+                let previousNode: INode;
+                if(customRoute.points.length < 1) {
+                    previousNode = $nodes.find(n => n.type == "start");
+                } else {
+                    const previousPoint = customRoute.points[customRoute.points.length - 1];
+                    const pathIndex = previousPoint.index;
+                    previousNode = $nodes.find((n) => n.paths.some((p) => p.index == pathIndex && p.start == previousPoint.start));
+                }
+                const connectedPoint = previousNode.paths.find(p => p.index == hoverPath);
+                const start = connectedPoint ? !connectedPoint.start : false;
+                const pathToAdd = $paths[hoverPath];
+                const dist = pointsToDist(pathToAdd.points);
+                customRoute.points.push({ index: hoverPath, start });
+                customRoute.dist += dist;
+                console.log(hoverPath, customRoute);
+                console.log(routeToStr(customRoute));
                 break;
             
         }

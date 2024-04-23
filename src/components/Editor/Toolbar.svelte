@@ -5,6 +5,7 @@
         <KeyBtn key='w' on={$toolIndex == 1} onSwitch={() => $toolIndex = 1}>Path</KeyBtn>
         <KeyBtn key='e' on={$toolIndex == 2} onSwitch={() => $toolIndex = 2}>Node</KeyBtn>
         <KeyBtn key=' ' on={$toolIndex == 3} onSwitch={switchCamera} keyLabel='space'>Camera</KeyBtn>
+        <KeyBtn key='r' on={$toolIndex == 4} onSwitch={() => $toolIndex = 4}>Custom Route</KeyBtn>
     </div>
     <div class="options row">
     {#if $toolIndex == 1}
