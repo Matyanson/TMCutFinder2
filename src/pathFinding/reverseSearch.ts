@@ -27,17 +27,19 @@ func = (
 	const usedPermutations: { [key: string]: boolean } = {};
 	const usedRoutes: { [key: string]: boolean } = {};
 	const rootRoutes = getRouteTo(start, finishes).sort((a, b) => a.dist - b.dist);
+	const isLargeMap = cpCount > 20;
 	const orderingCountLimit = 30;
 	let randomOrderCount = 0;
 
-	while (randomOrderCount < orderingCountLimit) {
+	while (getProgress() < 1) {
 		let root = rootRoutes[0];
 
 		let shuffle = randomShuffle(cps.length);
 		while (usedPermutations[shuffle.toString()]) {
 			shuffle = randomShuffle(cps.length);
+			if (!isLargeMap) randomOrderCount++;
 		}
-		randomOrderCount++;
+		if (isLargeMap) randomOrderCount++;
 		usedPermutations[shuffle.toString()] = true;
 
 		for (let i = 0; i < shuffle.length; i++) {
@@ -45,7 +47,7 @@ func = (
 			root = connectCPToRoot(root, cp, usedCps);
 			usedCps.push(cp.cpNum);
 
-			onProgress(getProgress(root));
+			onProgress(100 * getProgress());
 		}
 		shuffle = randomShuffle(rings.length);
 		for (let i = 0; i < shuffle.length; i++) {
@@ -53,7 +55,7 @@ func = (
 			root = connectCPToRoot(root, cp, usedCps);
 			usedCps.push(cp.cpNum);
 
-			onProgress(getProgress(root));
+			onProgress(100 * getProgress());
 		}
 
 		addRoute(root);
@@ -61,9 +63,11 @@ func = (
 
 	return finalRoutes;
 
-	function getProgress(r: Route) {
-		const localProgress = r.cps.length / cpCount;
-		return (100 * (randomOrderCount + localProgress)) / (orderingCountLimit + 1);
+	function getProgress() {
+		if (isLargeMap) {
+			return randomOrderCount / (settings.limit + 5); // give space for shorter final routes
+		}
+		return randomOrderCount / orderingCountLimit;
 	}
 
 	function addRoute(r: Route) {
