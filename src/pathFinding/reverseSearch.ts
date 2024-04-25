@@ -31,7 +31,7 @@ func = (
 	const orderingCountLimit = 30;
 	let randomOrderCount = 0;
 
-	while (getProgress() < 1) {
+	while (getProgress() < 0.999) {
 		let root = rootRoutes[0];
 
 		let shuffle = randomShuffle(cps.length);
