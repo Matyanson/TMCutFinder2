@@ -1,7 +1,10 @@
 <div class="canvas" bind:this={svg}>
     <svg class="bottom" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="2.5" markerHeight="2.5" orient="auto-start-reverse">
+        <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
             <path d="M 0 0 L 10 3 L 0 6 z" fill="#ddd"/>
+        </marker>
+        <marker id="arrow_small" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="2" markerHeight="2" orient="auto-start-reverse">
+            <path d="M 0 0 L 2 0 L 4 3 L 2 6 L 0 6 L 2 3 z" fill="#aaa"/>
         </marker>
         {#each $paths as path, i}
             <polyline 
@@ -241,6 +244,7 @@ import { getContext, onMount } from "svelte";
         stroke-width: 5px;
         stroke: #000;
         marker-end: url(#arrow);
+        marker-mid: url(#arrow_small);
     }
     svg circle {
         stroke-width: 3px;
