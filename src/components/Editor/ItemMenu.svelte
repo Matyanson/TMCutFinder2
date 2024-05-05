@@ -1,7 +1,7 @@
 <div class="menu">
 {#if $selectedNode > -1}
     <div class="">{`node: ${$selectedNode}`}</div>
-    <div class="">{`${$nodeType}`}</div>
+    <div class="">{`${$nodes[$selectedNode].type}`}</div>
     <div class="types">
     {#each nodeTypes as type}
         <button on:click={() => nodes.edit($selectedNode, {...$nodes[$selectedNode], type})}>{type}</button>
@@ -10,7 +10,7 @@
     <button on:click={() => {}}>delete</button>
 {:else if $selectedPath > -1}
     <div class="">{`path: ${$selectedPath}`}</div>
-    <div class="">{`${$pathType}`}</div>
+    <div class="">{`${$paths[$selectedPath].type}`}</div>
     <div class="types">
     {#each pathTypes as type}
         <button on:click={() => paths.edit($selectedPath, {...$paths[$selectedPath], type})}>{type}</button>
@@ -21,7 +21,7 @@
 </div>
 
 <script lang="ts">
-import { nodes, nodeType, paths, pathType, selectedNode, selectedPath } from "src/store";
+import { nodes, paths, selectedNode, selectedPath } from "src/store";
 import type { INode } from "src/models/Node";
 import type { Path } from "src/models/Path";
 
