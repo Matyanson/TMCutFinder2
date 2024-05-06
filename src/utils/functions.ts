@@ -1,70 +1,75 @@
-import type Coords from "src/models/Coords";
+import type Coords from 'src/models/Coords';
 
 export const getDist = (pointA: Coords, pointB: Coords) => {
-    return Math.sqrt(
-        Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2)
-    );
-}
+	return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
+};
 
 export const pointsToDist = (points: Coords[]) => {
-    let dist: number = 0;
-    for (let i = 1; i < points.length; i++) {
-        const p = points[i];
-        const prevP = points[i - 1];
-        dist += getDist(prevP, p);
-    }
-    return dist;
-}
+	let dist: number = 0;
+	for (let i = 1; i < points.length; i++) {
+		const p = points[i];
+		const prevP = points[i - 1];
+		dist += getDist(prevP, p);
+	}
+	return dist;
+};
 
 export const addPoints = (pointA: Coords, pointB: Coords) => {
-    return {x: pointA.x + pointB.x, y: pointA.y + pointB.y}
-}
+	return { x: pointA.x + pointB.x, y: pointA.y + pointB.y };
+};
 
 export const lerp = (v0: number, v1: number, t: number) => {
-    return (1 - t) * v0 + t * v1;
-}
+	return (1 - t) * v0 + t * v1;
+};
 
 export const lerpPoint = (p1: Coords, p2: Coords, t: number) => {
-    return {
-        x: lerp(p1.x, p2.x, t),
-        y: lerp(p1.y, p2.y, t)
-    };
-}
+	return {
+		x: lerp(p1.x, p2.x, t),
+		y: lerp(p1.y, p2.y, t)
+	};
+};
 
 export const nearestIndex = (pointA: Coords, points: Coords[]) => {
-    if(!points[0]) return -1;
-    let res = 0;
-    let shortestDist = getDist(pointA, points[0]);
+	if (!points[0]) return -1;
+	let res = 0;
+	let shortestDist = getDist(pointA, points[0]);
 
-    for (let i = 1; i < points.length; i++) {
-        const newDist = getDist(pointA, points[i]);
-        if(newDist < shortestDist) {
-            shortestDist = newDist;
-            res = i;
-        }
-    }
-    return res;
-}
+	for (let i = 1; i < points.length; i++) {
+		const newDist = getDist(pointA, points[i]);
+		if (newDist < shortestDist) {
+			shortestDist = newDist;
+			res = i;
+		}
+	}
+	return res;
+};
 
 export const pointsToPath = (points: Coords[], ratio: number) => {
-    let path = "";
-    let pointsCopy = [...points];
-    for(let p of pointsCopy){
-        path += ` ${p.x / ratio},${p.y}`;
-    }
-    return path;
-}
+	let path = '';
+	let pointsCopy = [...points];
+	for (let p of pointsCopy) {
+		path += ` ${p.x / ratio},${p.y}`;
+	}
+	return path;
+};
 
 export const median = (numbers: number[]) => {
-    const sorted = numbers.slice().sort((a, b) => a - b);
-    const middle = Math.floor(sorted.length / 2);
+	const sorted = numbers.slice().sort((a, b) => a - b);
+	const middle = Math.floor(sorted.length / 2);
 
-    if (sorted.length % 2 === 0)
-        return (sorted[middle - 1] + sorted[middle]) / 2;
-        
-    return sorted[middle];
-}
+	if (sorted.length % 2 === 0) return (sorted[middle - 1] + sorted[middle]) / 2;
+
+	return sorted[middle];
+};
 
 export const random = (from: number, to: number): number => {
-    return Math.floor(Math.random() * to) + from;
+	return Math.floor(Math.random() * to) + from;
+};
+
+export function uniqBy<T>(a: T[], key: (i: T) => number | string) {
+	let seen = {};
+	return a.filter(function (item) {
+		let k = key(item);
+		return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+	});
 }
