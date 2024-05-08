@@ -152,11 +152,6 @@ func = (
 		}
 	}
 
-	function connectCPToRoot(root: Route, cp: calcNode): Route {
-		const cpRoutes = getRouteTo(cp.paths[0], root.points, true);
-		return root;
-	}
-
 	/* HELPER */
 	function reversePoints(points: PathNode[]) {
 		return points

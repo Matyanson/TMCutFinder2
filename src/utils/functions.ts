@@ -73,3 +73,49 @@ export function uniqBy<T>(a: T[], key: (i: T) => number | string) {
 		return seen.hasOwnProperty(k) ? false : (seen[k] = true);
 	});
 }
+
+export function splitByIndexes<T>(arr: T[], ...indexes: number[]) {
+	const chunks: T[][] = [];
+	let previous = 0;
+	for (const i of indexes) {
+		chunks.push(arr.slice(previous, i));
+		previous = i;
+	}
+	chunks.push(arr.slice(previous));
+	return chunks;
+}
+
+export function randomShuffle(length: number) {
+	const res: number[] = [];
+	for (let i = 0; i < length; i++) {
+		let n;
+		do {
+			n = random(0, length);
+		} while (res.includes(n));
+		res.push(n);
+	}
+	return res;
+}
+
+export function getNthPermutation(n, array) {
+	const length = array.length;
+	const indices = [];
+
+	// Copy the array to avoid mutation
+	const arrayCopy = array.slice();
+
+	// Calculate the permutation indices
+	for (let i = length - 1; i >= 0; i--) {
+		const f = factorial(i);
+		indices.push(Math.floor(n / f));
+		n %= f;
+	}
+
+	// Map the indices to elements from the array
+	return indices.map((i) => arrayCopy.splice(i, 1)[0]);
+}
+
+export function factorial(n) {
+	if (n === 0 || n === 1) return 1;
+	return n * factorial(n - 1);
+}
