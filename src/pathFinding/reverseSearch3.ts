@@ -27,24 +27,24 @@ func = (
 ): Route[] => {
 	const cps = nodes.filter((n) => n.type == 'cp');
 	const rings = nodes.filter((n) => n.type == 'ring');
-	const cpCount = cps.length + rings.length;
+	const allCps = [...cps, ...rings];
 
 	// get direct shortest routes to finishes
 	const rootRoutes = getRouteTo(start, finishes);
-	if (cpCount < 1) return rootRoutes;
+	if (allCps.length < 1) return rootRoutes;
 
 	let finalRoutes: Route[] = [];
 	const usedRoutes: { [key: string]: boolean } = {};
 
-	const order = randomShuffle(cps.length);
-	const orderCount = factorial(cps.length);
+	const order = randomShuffle(allCps.length);
+	const orderCount = factorial(allCps.length);
 	const orderLimit = Math.min(orderCount, 300);
 
 	for (let n = 0; n < orderLimit; n++) {
 		let root = rootRoutes[0];
 		const orderPermutation = getNthPermutation(n, order);
 		for (const i of orderPermutation) {
-			const cp = cps[i];
+			const cp = allCps[i];
 			root = addPointToRoute(root, cp.paths[0]);
 		}
 		addRoute(root);
