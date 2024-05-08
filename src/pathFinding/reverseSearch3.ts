@@ -38,17 +38,19 @@ func = (
 
 	const order = randomShuffle(allCps.length);
 	const orderCount = factorial(allCps.length);
-	const orderLimit = Math.min(orderCount, 300);
+	const orderLimit = Math.min(orderCount, 1000);
+	const randomN = randomShuffle(orderLimit);
 
-	for (let n = 0; n < orderLimit; n++) {
+	for (let i = 0; i < randomN.length; i++) {
 		let root = rootRoutes[0];
+		const n = randomN[i];
 		const orderPermutation = getNthPermutation(n, order);
-		for (const i of orderPermutation) {
-			const cp = allCps[i];
+		for (const j of orderPermutation) {
+			const cp = allCps[j];
 			root = addPointToRoute(root, cp.paths[0]);
 		}
 		addRoute(root);
-		onProgress(100 * (n / orderLimit));
+		onProgress(100 * (i / orderLimit));
 	}
 
 	return finalRoutes;
