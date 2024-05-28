@@ -2,7 +2,7 @@ import type { PathNode } from 'src/models/Node';
 import type { Route } from 'src/models/Route';
 import type SearchAlghorithm from 'src/models/SearchAlgorithm';
 import { routeToStr } from 'src/utils/data';
-import { random } from 'src/utils/functions';
+import { factorial, random } from 'src/utils/functions';
 import type { calcNode, calcPath } from 'src/web-worker';
 
 const name = 'reverse search v2';
@@ -27,7 +27,8 @@ func = (
 	const usedPermutations: { [key: string]: boolean } = {};
 	const usedRoutes: { [key: string]: boolean } = {};
 	const rootRoutes = getRouteTo(start, finishes).sort((a, b) => a.dist - b.dist);
-	const orderingCountLimit = 30;
+	const orderingCountLimit = Math.min(30, factorial(cps.length));
+
 	let randomOrderCount = 0;
 
 	while (getProgress() < 0.999) {

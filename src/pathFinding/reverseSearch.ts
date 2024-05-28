@@ -2,7 +2,7 @@ import type { PathNode } from 'src/models/Node';
 import type { Route } from 'src/models/Route';
 import type SearchAlghorithm from 'src/models/SearchAlgorithm';
 import { routeToStr } from 'src/utils/data';
-import { random } from 'src/utils/functions';
+import { factorial, random } from 'src/utils/functions';
 import type { calcNode, calcPath } from 'src/web-worker';
 
 const name = 'reverse search';
@@ -28,14 +28,14 @@ func = (
 	const usedRoutes: { [key: string]: boolean } = {};
 	const rootRoutes = getRouteTo(start, finishes).sort((a, b) => a.dist - b.dist);
 	const isLargeMap = cpCount > 20;
-	const orderingCountLimit = 30;
+	const orderingCountLimit = Math.min(30, factorial(cps.length));
 	let randomOrderCount = 0;
 
 	while (getProgress() < 0.999) {
 		let root = rootRoutes[0];
 
 		let shuffle = randomShuffle(cps.length);
-		while (usedPermutations[shuffle.toString()]) {
+		while (usedPermutations[shuffle.toString()] || getProgress() < 0.999) {
 			shuffle = randomShuffle(cps.length);
 			if (!isLargeMap) randomOrderCount++;
 		}
